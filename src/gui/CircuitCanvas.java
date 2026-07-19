@@ -8,12 +8,10 @@ public class CircuitCanvas extends Pane{
     private final Canvas backgroundCanvas;
     private final Camera camera;
     private final GridRenderer gridRenderer;
+    
     public CircuitCanvas(Camera camera){
-
         this.camera = camera;
-
         gridRenderer = new GridRenderer(camera);
-
         backgroundCanvas = new Canvas();
 
         backgroundCanvas.widthProperty().bind(widthProperty());
