@@ -15,16 +15,16 @@ public class MainWindow {
     private final Scene scene;
     private final Camera camera;
     private final CircuitCanvas circuitCanvas;
+    
     public MainWindow(Stage stage){
         this.stage = stage;
 
         root = new BorderPane();
         scene = new Scene(root, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-
         camera = new Camera();
 
         this.circuitCanvas = new CircuitCanvas(camera);
-
+        
         stage.setTitle(WINDOW_TITLE);
         stage.setScene(scene);
         stage.setMinWidth(900);
