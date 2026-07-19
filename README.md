@@ -1,10 +1,8 @@
 # Project Structure
 
 The project is organized into several packages, each responsible for a distinct part of the simulator. 
-Architecture is designed to separate all components 
-(graphical representation, circuit logic, simulation behavior, and utility functions)
+Architecture is designed to separate all components (graphical representation, circuit logic, simulation behavior, and utility functions)
 so that each system can be developed and tested independently.
-
 src
 - circuit pkg
   - Circuit.java
@@ -41,7 +39,6 @@ src
   - Main.java
 - util
   - Vector2.java
-
 
 ## circuit
 
@@ -95,58 +92,6 @@ Examples include:
 # Class Specifications
 
 
-## Vector2
-
-**Package:** `util`
-
-**Purpose:**
-
-`Vector2` is an immutable two-dimensional vector class for representing positions, directions, and other geometric quantities.
-The class provides a common mathematical foundation for systems that require coordinate manipulation.
-Includes camera transformations, rendering, and future circuit placement.
-
----
-
-**Design:**
-
-`Vector2` instances are immutable for consistency purposes and to avoid confusion between variables. 
-Instead of modifying existing vectors, operations create and return new `Vector2` objects.
-
----
-
-**Implemented Features:**
-
-### Vector Constants
-- `ZERO` — for `(0,0)`
-- `UNIT_X` — for `(1,0)`
-- `UNIT_Y` — for `(0,1)`
-
-### Accessors
-- Retrieve x-coordinate
-- Retrieve y-coordinate
-
-### Arithmetic Operations
-- Vector addition
-- Vector subtraction
-- Scalar multiplication
-- Scalar division
-
-### Mathematical Operations
-- Dot product
-- Vector length
-- Squared vector length
-- Distance between vectors
-- Squared distance between vectors
-- Vector normalization
-- Vector negation
-
-### Utility Operations
-- Create modified copies with updated x or y values
-- Compare vectors for equality
-- Generate hash values
-- Convert vectors to readable string representations
-
----
 
 ## Camera
 
@@ -199,6 +144,46 @@ This allows:
   - camera position,
   - zoom scaling,
   - viewport dimensions
+
+---
+
+## GridRenderer
+
+**Package:** `gui.render`
+
+**Purpose:**
+
+`GridRenderer` renders the visual grid of the circuit workspace.
+The grid consists of fixed world-space points that are transformed into screen-space coordinates through the `Camera`. 
+This ensures that grid positions remain constant while allowing the user view to change through zooming and future camera movement.
+
+---
+
+**Design:**
+
+`GridRenderer` only handles visualization of the grid.
+Movement, user interaction, and snapping are not its responsibilities.
+Grid points are generated in world coordinates based on the currently visible area.
+Before rendering, these points are converted into screen coordinates using the shared `Camera` instance.
+Creates consistent grid behavior during zooming.
+
+---
+
+**Implemented Features:**
+
+### Grid Rendering
+- Generate visible grid points based on world coordinates
+- Render grid points onto a JavaFX `GraphicsContext`
+- Maintain constant world-space grid spacing
+
+### Camera Integration
+- Convert screen boundaries into world coordinates
+- Convert grid positions from world space into screen space
+- Account for camera zoom and position
+
+### Grid Control
+- Enable or disable grid rendering
+- Configure grid spacing and dot size
 
 ---
 
@@ -280,5 +265,58 @@ i.e. `GridRenderer` handles grid visualization exclusively
 ### GUI Structure
 - Extends JavaFX `Pane`
 - Serve as the central container for visual circuit elements
+
+---
+
+## Vector2
+
+**Package:** `util`
+
+**Purpose:**
+
+`Vector2` is an immutable two-dimensional vector class for representing positions, directions, and other geometric quantities.
+The class provides a common mathematical foundation for systems that require coordinate manipulation.
+Includes camera transformations, rendering, and future circuit placement.
+
+---
+
+**Design:**
+
+`Vector2` instances are immutable for consistency purposes and to avoid confusion between variables. 
+Instead of modifying existing vectors, operations create and return new `Vector2` objects.
+
+---
+
+**Implemented Features:**
+
+### Vector Constants
+- `ZERO` — for `(0,0)`
+- `UNIT_X` — for `(1,0)`
+- `UNIT_Y` — for `(0,1)`
+
+### Accessors
+- Retrieve x-coordinate
+- Retrieve y-coordinate
+
+### Arithmetic Operations
+- Vector addition
+- Vector subtraction
+- Scalar multiplication
+- Scalar division
+
+### Mathematical Operations
+- Dot product
+- Vector length
+- Squared vector length
+- Distance between vectors
+- Squared distance between vectors
+- Vector normalization
+- Vector negation
+
+### Utility Operations
+- Create modified copies with updated x or y values
+- Compare vectors for equality
+- Generate hash values
+- Convert vectors to readable string representations
 
 ---
