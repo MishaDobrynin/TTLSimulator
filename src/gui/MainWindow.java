@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 public class MainWindow {
     //window dimensioning
     private static final String WINDOW_TITLE = "Circuit Simulator";
-    private static final double DEFAULT_WIDTH = 1400; //such good conventional naming!
+    private static final double DEFAULT_WIDTH = 1400;
     private static final double DEFAULT_HEIGHT = 900;
 
     //fx objects
