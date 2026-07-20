@@ -3,12 +3,13 @@
 A Java-based circuit simulator designed to explore digital logic, transistor-level circuits, and computer architecture.
 
 The project is structured to separate:
+
 - circuit logic,
 - graphical representation,
 - simulation behavior,
-- and reusable utility systems.
+- reusable utility systems.
 
-This separation allows each system to be developed, tested, and expanded independently.
+This allows each system to be developed and tested independently.
 
 ---
 
@@ -24,11 +25,12 @@ src
 
 - components
     - Component.java
-    - GroundNode.java
     - InputNode.java
+    - PowerNode.java
+    - GroundNode.java
+    - Transistor.java
     - NMOS.java
     - PMOS.java
-    - PowerNode.java
 
 - gui
     - CircuitCanvas.java
@@ -60,8 +62,6 @@ src
 
 ---
 
-# Classes
-
 # simulator
 
 ## Main
@@ -70,17 +70,21 @@ src
 
 **Purpose:**
 
-Entry point of the application.
+Application entry point.
 
 **Implemented Features:**
 
-- Starts the JavaFX application
-- Creates the main application window
-- Initializes the program environment
+- Starts JavaFX
+- Creates the main window
+- Initializes the application
 
 ---
 
 # gui
+
+Contains all graphical interface systems.
+
+---
 
 ## MainWindow
 
@@ -88,21 +92,20 @@ Entry point of the application.
 
 **Purpose:**
 
-Manages the primary application window and connects major GUI systems.
+Creates and manages the main application window.
 
 **Implemented Features:**
 
 - Creates JavaFX stage and scene
-- Sets window title and dimensions
-- Initializes the Camera
+- Sets window size and title
+- Creates the Camera
 - Creates the CircuitCanvas
-- Connects the workspace to the application window
+- Connects GUI systems
 
 **Design:**
 
-MainWindow creates shared objects and passes them into other systems instead of allowing each class to create its own dependencies.
-
-This ensures that systems such as rendering and coordinate transformation share consistent state.
+MainWindow creates shared objects and passes them into other systems.
+This ensures systems such as rendering and camera control use the same state.
 
 ---
 
@@ -112,26 +115,24 @@ This ensures that systems such as rendering and coordinate transformation share 
 
 **Purpose:**
 
-Provides the main workspace where circuits and graphical elements will be displayed.
+Main workspace for displaying the circuit.
 
 **Implemented Features:**
 
-- Creates the JavaFX drawing canvas
-- Automatically resizes with the window
-- Stores the shared Camera
+- Creates the JavaFX canvas
+- Resizes with the window
+- Stores the Camera
 - Connects rendering systems
-- Manages redraw operations
 
 **Design:**
 
-CircuitCanvas does not directly draw circuit objects.
+CircuitCanvas does not directly draw objects.
 
-Rendering is delegated to specialized renderer classes:
+Rendering is handled by separate classes:
+
 - GridRenderer
 - ComponentRenderer
 - WireRenderer
-
-This keeps the graphical workspace separate from individual rendering systems.
 
 ---
 
@@ -143,36 +144,24 @@ This keeps the graphical workspace separate from individual rendering systems.
 
 **Purpose:**
 
-Manages the relationship between world coordinates and screen coordinates.
-
-The Camera represents the user's view of the circuit workspace.
+Controls the relationship between world coordinates and screen coordinates.
 
 **Implemented Features:**
 
-### Camera Information
-- Store camera center position
+- Store camera position
 - Store zoom level
-- Retrieve camera information
-
-### Movement
-- Move camera position
-
-### Zoom
-- Modify zoom level
-- Validate zoom values
-
-### Coordinate Conversion
+- Move camera
 - Convert world coordinates to screen coordinates
 - Convert screen coordinates to world coordinates
 
 **Design:**
 
-Objects in the simulator exist in world space and are independent from the display window.
+Objects exist in world space and are independent from the display.
 
-The Camera transforms these positions for rendering, allowing:
-- zooming,
+The Camera handles:
+- zoom,
 - future panning,
-- consistent coordinate systems.
+- coordinate conversion.
 
 ---
 
@@ -184,23 +173,23 @@ The Camera transforms these positions for rendering, allowing:
 
 **Purpose:**
 
-Renders the workspace grid.
+Draws the circuit workspace grid.
 
 **Implemented Features:**
 
-- Generates grid points in world coordinates
-- Converts grid positions into screen coordinates
-- Draws grid points using JavaFX GraphicsContext
-- Supports enabling and disabling the grid
+- Creates world-space grid points
+- Converts points through the Camera
+- Draws grid dots
+- Enables/disables grid rendering
 
 **Design:**
 
-The grid exists in world space rather than screen space.
+The grid exists in world coordinates.
 
 This allows:
-- consistent grid positions,
 - correct zoom behavior,
-- future snapping functionality.
+- consistent grid placement,
+- future snapping.
 
 ---
 
@@ -210,13 +199,13 @@ This allows:
 
 **Purpose:**
 
-Placeholder for rendering circuit components.
+Placeholder for drawing circuit components.
 
 **Planned Features:**
 
-- Render component graphics
+- Draw components
 - Display component states
-- Handle component visualization
+- Handle component graphics
 
 ---
 
@@ -226,16 +215,34 @@ Placeholder for rendering circuit components.
 
 **Purpose:**
 
-Placeholder for rendering electrical connections.
+Placeholder for drawing electrical connections.
 
 **Planned Features:**
 
 - Draw wires between pins
-- Display connections between components
+- Display circuit connections
 
 ---
 
 # components
+
+Contains all physical circuit components.
+
+Components store structure and connections.
+Simulation behavior is handled separately.
+
+Hierarchy:
+Component
+|
++-- InputNode
++-- PowerNode
++-- GroundNode
++-- Transistor
+|
++-- NMOS
++-- PMOS
+
+---
 
 ## Component
 
@@ -243,39 +250,20 @@ Placeholder for rendering electrical connections.
 
 **Purpose:**
 
-Abstract base class for all electrical components.
+Abstract base class for all circuit components.
 
 **Implemented Features:**
 
-- Store component position
-- Store component rotation
-- Retrieve and modify spatial information
+- Store position
+- Store rotation
+- Store component pins
+- Add pins
 
 **Design:**
 
-Component only stores information shared by all circuit elements.
+Component defines shared physical properties.
 
-Rendering and simulation behavior are handled by separate systems.
-
----
-
-## PowerNode
-
-**Package:** `components`
-
-**Purpose:**
-
-Placeholder for a positive voltage source.
-
----
-
-## GroundNode
-
-**Package:** `components`
-
-**Purpose:**
-
-Placeholder for circuit ground reference.
+Rendering and simulation are handled separately.
 
 ---
 
@@ -285,7 +273,74 @@ Placeholder for circuit ground reference.
 
 **Purpose:**
 
-Placeholder for user-controlled circuit inputs.
+Represents a user-controlled input.
+
+**Implemented Features:**
+
+- Stores an output pin
+- Stores input state
+
+**Future Use:**
+
+Will provide HIGH/LOW signals to circuits.
+
+---
+
+## PowerNode
+
+**Package:** `components`
+
+**Purpose:**
+
+Represents a positive voltage source.
+
+**Implemented Features:**
+
+- Stores a connection pin
+
+**Future Use:**
+
+Will provide constant HIGH voltage during simulation.
+
+---
+
+## GroundNode
+
+**Package:** `components`
+
+**Purpose:**
+
+Represents circuit ground.
+
+**Implemented Features:**
+
+- Stores a connection pin
+
+**Future Use:**
+
+Will provide constant LOW voltage during simulation.
+
+---
+
+## Transistor
+
+**Package:** `components`
+
+**Purpose:**
+
+Abstract base class for MOS transistors.
+
+**Implemented Features:**
+
+- Creates gate pin
+- Creates drain pin
+- Creates source pin
+
+**Design:**
+
+All MOS transistors share the same physical structure.
+
+Specific transistor behavior is handled by subclasses and the simulation system.
 
 ---
 
@@ -295,7 +350,17 @@ Placeholder for user-controlled circuit inputs.
 
 **Purpose:**
 
-Placeholder for N-channel MOSFET implementation.
+Represents an N-channel MOS transistor.
+
+**Implemented Features:**
+
+- Inherits transistor structure
+- Provides gate, drain, and source pins
+
+**Future Behavior:**
+
+- HIGH gate signal allows conduction
+- LOW gate signal prevents conduction
 
 ---
 
@@ -305,11 +370,25 @@ Placeholder for N-channel MOSFET implementation.
 
 **Purpose:**
 
-Placeholder for P-channel MOSFET implementation.
+Represents a P-channel MOS transistor.
+
+**Implemented Features:**
+
+- Inherits transistor structure
+- Provides gate, drain, and source pins
+
+**Future Behavior:**
+
+- LOW gate signal allows conduction
+- HIGH gate signal prevents conduction
 
 ---
 
 # circuit
+
+Contains the logical representation of circuits.
+
+---
 
 ## Pin
 
@@ -317,45 +396,19 @@ Placeholder for P-channel MOSFET implementation.
 
 **Purpose:**
 
-Represents an electrical connection point belonging to a component.
+Represents a connection point on a component.
 
 **Implemented Features:**
 
 - Stores owning component
-- Stores position relative to component
+- Stores local position
 - Calculates world position
 
 **Design:**
 
-Pins store local coordinates instead of absolute coordinates.
+Pins use local coordinates.
 
-This allows pins to automatically move with their component while maintaining their relative location.
-
----
-
-## Circuit
-
-**Package:** `circuit`
-
-**Purpose:**
-
-Placeholder for the main circuit container.
-
-**Planned Features:**
-
-- Store components
-- Store wires
-- Manage circuit structure
-
----
-
-## Net
-
-**Package:** `circuit`
-
-**Purpose:**
-
-Placeholder for electrical networks connecting multiple pins.
+When a component moves, its pins automatically move with it.
 
 ---
 
@@ -365,11 +418,53 @@ Placeholder for electrical networks connecting multiple pins.
 
 **Purpose:**
 
-Placeholder for physical connections between pins.
+Represents a physical connection between two pins.
+
+**Implemented Features:**
+
+- Store start pin
+- Store end pin
+- Retrieve pin positions
+
+---
+
+## Net
+
+**Package:** `circuit`
+
+**Purpose:**
+
+Represents an electrical connection between multiple pins.
+
+**Implemented Features:**
+
+- Store connected pins
+- Store connected wires
+- Add pins
+- Add wires
+
+---
+
+## Circuit
+
+**Package:** `circuit`
+
+**Purpose:**
+
+Top-level container for circuit data.
+
+**Implemented Features:**
+
+- Store components
+- Store nets
 
 ---
 
 # simulation
+
+Contains systems responsible for circuit behavior.
+
+---
 
 ## SimulationEngine
 
@@ -377,7 +472,7 @@ Placeholder for physical connections between pins.
 
 **Purpose:**
 
-Placeholder for circuit simulation execution.
+Placeholder for running circuit simulations.
 
 ---
 
@@ -387,11 +482,15 @@ Placeholder for circuit simulation execution.
 
 **Purpose:**
 
-Placeholder for solving voltage states throughout circuits.
+Placeholder for calculating voltage states.
 
 ---
 
 # util
+
+Contains reusable utility classes.
+
+---
 
 ## Vector2
 
@@ -399,13 +498,13 @@ Placeholder for solving voltage states throughout circuits.
 
 **Purpose:**
 
-Immutable two-dimensional vector class used throughout the simulator.
+Immutable two-dimensional vector class.
 
 **Implemented Features:**
 
 - Store x and y coordinates
-- Vector addition
-- Vector subtraction
+- Addition
+- Subtraction
 - Scalar multiplication
 - Scalar division
 - Dot product
@@ -415,19 +514,19 @@ Immutable two-dimensional vector class used throughout the simulator.
 - Negation
 - Coordinate updates
 - Equality comparison
-- String representation
 
 **Design:**
 
-Vector2 objects are immutable.
+Vector2 objects cannot be modified after creation.
 
-Operations return new Vector2 objects rather than modifying existing ones, preventing unexpected changes between systems.
+Operations create new Vector2 objects, preventing accidental changes between systems.
 
-Vector2 is used for:
+Used for:
+
 - positions,
 - movement,
-- camera transformations,
-- rendering calculations.
+- camera calculations,
+- rendering.
 
 ---
 
@@ -435,12 +534,12 @@ Vector2 is used for:
 
 The simulator follows a modular architecture.
 
-Major principles:
+Principles:
 
-- Each class has a single responsibility
-- Circuit logic remains separate from graphics
-- Rendering remains separate from simulation
-- Components remain reusable
+- Each class has one responsibility
+- Circuit logic is separate from graphics
+- Rendering is separate from simulation
+- Components are reusable
 - Systems communicate through clear interfaces
 
 The goal is to create a scalable foundation for exploring digital logic, transistor circuits, and computer architecture.
