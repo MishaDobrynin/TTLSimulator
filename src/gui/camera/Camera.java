@@ -56,4 +56,8 @@ public class Camera {
         relative = relative.divide(zoom);
         return relative.add(center);
     }
+
+    public void zoom(double factor){
+        setZoom(zoom * factor);
+    }
 }
