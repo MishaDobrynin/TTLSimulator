@@ -12,11 +12,14 @@ public class CircuitCanvas extends Pane{
     private final Canvas backgroundCanvas;
     private final Camera camera;
     private final GridRenderer gridRenderer;
+    private final ToolManager toolManager;
 
     public CircuitCanvas(Camera camera){
         this.camera = camera;
         gridRenderer = new GridRenderer(camera);
         backgroundCanvas = new Canvas();
+        toolManager = new ToolManager();
+        toolManager.setCurrentTool(new SelectTool(), this);
 
         backgroundCanvas.widthProperty().bind(widthProperty());
         backgroundCanvas.heightProperty().bind(heightProperty());
@@ -29,6 +32,19 @@ public class CircuitCanvas extends Pane{
         heightProperty().addListener(resizeListener);
 
         redraw();
+
+        setOnMousePressed(event ->
+            toolManager.mousePressed(event, this));
+        setOnMouseReleased(event ->
+            toolManager.mouseReleased(event, this));
+        setOnMouseDragged(event ->
+            toolManager.mouseDragged(event, this));
+        setOnMouseMoved(event ->
+            toolManager.mouseMoved(event, this));
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 
     private void redraw(){
