@@ -224,6 +224,43 @@ Placeholder for drawing electrical connections.
 
 ---
 
+# gui.tools
+
+Contains classes responsible for user interaction.
+
+The active tool determines how mouse and keyboard input should be interpreted.
+Examples include selecting components, drawing wires, or placing new objects.
+
+---
+
+## Tool
+
+**Package:** `gui.tools`
+
+**Purpose:**
+
+Abstract base class for all editor tools.
+
+**Implemented Features:**
+
+- Receives mouse events
+- Receives keyboard events
+- Supports activation and deactivation
+- Provides default empty implementations for all input callbacks
+
+**Design:**
+
+Each tool represents one editing mode.
+
+Examples include:
+
+- Selection
+- Wire placement
+- Component placement
+
+Only one tool is active at a time.
+The `ToolManager` controls which tool currently receives user input.
+
 # components
 
 Contains all physical circuit components.
