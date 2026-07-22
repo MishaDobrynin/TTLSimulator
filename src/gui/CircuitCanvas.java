@@ -2,6 +2,7 @@ package gui;
 
 import gui.render.GridRenderer;
 import gui.camera.Camera;
+import gui.selection.SelectionManager;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -13,11 +14,13 @@ public class CircuitCanvas extends Pane{
     private final Camera camera;
     private final GridRenderer gridRenderer;
     private final ToolManager toolManager;
+    private final SelectionManager selectionManager;
 
     public CircuitCanvas(Camera camera){
         this.camera = camera;
         gridRenderer = new GridRenderer(camera);
         backgroundCanvas = new Canvas();
+        selectionManager = new SelectionManager();
         toolManager = new ToolManager();
         toolManager.setCurrentTool(new SelectTool(), this);
 
@@ -45,6 +48,10 @@ public class CircuitCanvas extends Pane{
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public SelectionManager getSelectionManager() {
+        return selectionManager;
     }
 
     private void redraw(){
