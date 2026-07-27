@@ -5,8 +5,8 @@ import components.Component;
 import gui.render.ComponentRenderer;
 import gui.render.GridRenderer;
 import gui.camera.Camera;
-import gui.tools.ToolManager;
 import gui.tools.SelectTool;
+import gui.tools.ToolManager;
 import gui.selection.SelectionManager;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.canvas.Canvas;
@@ -65,7 +65,7 @@ public class CircuitCanvas extends Pane{
         return selectionManager;
     }
 
-    private void redraw(){
+    public void redraw(){
         GraphicsContext gc = backgroundCanvas.getGraphicsContext2D();
 
         double width = backgroundCanvas.getWidth();
