@@ -1,4 +1,5 @@
 package gui;
+import circuit.Circuit;
 import gui.camera.Camera;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -15,15 +16,17 @@ public class MainWindow {
     private final Scene scene;
     private final Camera camera;
     private final CircuitCanvas circuitCanvas;
-    
+
+    private final Circuit circuit;
     public MainWindow(Stage stage){
         this.stage = stage;
 
         root = new BorderPane();
         scene = new Scene(root, DEFAULT_WIDTH, DEFAULT_HEIGHT);
         camera = new Camera();
+        circuit = new Circuit();
 
-        this.circuitCanvas = new CircuitCanvas(camera);
+        this.circuitCanvas = new CircuitCanvas(camera, circuit);
         
         stage.setTitle(WINDOW_TITLE);
         stage.setScene(scene);

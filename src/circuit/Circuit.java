@@ -6,6 +6,7 @@ import java.util.List;
 public class Circuit {
     private final List<Component> components;
     private final List<Net> nets;
+    private final List<Wire> wires;
 
     public Circuit(){
         components = new ArrayList<>();
@@ -22,10 +23,16 @@ public class Circuit {
             nets.add(net);
         }
     }
+    public void addWire(Wire wire){
+        wires.add(wire);
+    }
     public List<Component> getComponents(){
         return components;
     }
     public List<Net> getNets(){
         return nets;
+    }
+    public List<Wire> getWires(){
+        return wires;
     }
 }

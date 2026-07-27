@@ -1,7 +1,12 @@
 package gui;
 
+import circuit.Circuit;
+import components.Component;
+import gui.render.ComponentRenderer;
 import gui.render.GridRenderer;
 import gui.camera.Camera;
+import gui.tools.ToolManager;
+import gui.tools.SelectTool;
 import gui.selection.SelectionManager;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.canvas.Canvas;
@@ -13,12 +18,17 @@ public class CircuitCanvas extends Pane{
     private final Canvas backgroundCanvas;
     private final Camera camera;
     private final GridRenderer gridRenderer;
+    private final ComponentRenderer componentRenderer;
     private final ToolManager toolManager;
     private final SelectionManager selectionManager;
 
-    public CircuitCanvas(Camera camera){
+    private final Circuit circuit;
+
+    public CircuitCanvas(Camera camera, Circuit circuit){
         this.camera = camera;
+        this.circuit = circuit;
         gridRenderer = new GridRenderer(camera);
+        componentRenderer = new ComponentRenderer(camera);
         backgroundCanvas = new Canvas();
         selectionManager = new SelectionManager();
         toolManager = new ToolManager();
@@ -50,6 +60,7 @@ public class CircuitCanvas extends Pane{
         return camera;
     }
 
+    public Circuit getCircuit(){return circuit;}
     public SelectionManager getSelectionManager() {
         return selectionManager;
     }
@@ -68,5 +79,15 @@ public class CircuitCanvas extends Pane{
                 width,
                 height
         );
+
+        for(Component component : circuit.getComponents()){
+            componentRenderer.drawComponent(
+                    gc,
+                    component,
+                    width,
+                    height
+            );
+
+        }
     }
 }

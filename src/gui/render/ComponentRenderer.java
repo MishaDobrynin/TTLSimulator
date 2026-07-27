@@ -4,12 +4,85 @@ import gui.camera.Camera;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import util.Vector2;
+import components.Component;
+import components.GroundNode;
+import components.InputNode;
+import components.NMOS;
+import components.PMOS;
+import components.PowerNode;
 
 public class ComponentRenderer {
     private final Camera camera;
 
     public ComponentRenderer(Camera camera){
         this.camera = camera;
+    }
+
+    /**
+     * Draws any supported component.
+     */
+    public void drawComponent(
+            GraphicsContext gc,
+            Component component,
+            double viewportWidth,
+            double viewportHeight){
+
+        if(component instanceof NMOS){
+
+            drawNMOS(
+                    gc,
+                    component.getPosition(),
+                    viewportWidth,
+                    viewportHeight
+            );
+
+        }
+        else if(component instanceof PMOS){
+
+            drawPMOS(
+                    gc,
+                    component.getPosition(),
+                    viewportWidth,
+                    viewportHeight
+            );
+
+        }
+        else if(component instanceof InputNode){
+
+            drawInput(
+                    gc,
+                    component.getPosition(),
+                    viewportWidth,
+                    viewportHeight
+            );
+
+        }
+        else if(component instanceof PowerNode){
+
+            drawPower(
+                    gc,
+                    component.getPosition(),
+                    viewportWidth,
+                    viewportHeight
+            );
+
+        }
+        else if(component instanceof GroundNode){
+
+            drawGround(
+                    gc,
+                    component.getPosition(),
+                    viewportWidth,
+                    viewportHeight
+            );
+
+        }
+        else{
+            throw new IllegalArgumentException(
+                    "Unsupported component type: "
+                            + component.getClass().getSimpleName()
+            );
+        }
     }
 
     /**
