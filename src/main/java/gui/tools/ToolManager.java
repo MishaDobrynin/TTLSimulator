@@ -59,6 +59,13 @@ public class ToolManager {
             currentTool.mouseReleased(event, canvas);
         }
     }
+    public String getCurrentToolName(){
+        if(currentTool == null){
+            return "None";
+        }
+
+        return currentTool.getClass().getSimpleName();
+    }
 
     /**
      * Forwards a mouse drag.
