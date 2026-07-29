@@ -11,20 +11,11 @@ public abstract class Transistor extends Component {
     protected Transistor(Vector2 position){
         super(position);
 
-        gate = new Pin(
-                this,
-                new Vector2(-20,0)
-        );
+        gate = new Pin(this, new Vector2(-20,0));
 
-        drain = new Pin(
-                this,
-                new Vector2(0,-20)
-        );
+        drain = new Pin(this, new Vector2(0,-30));
 
-        source = new Pin(
-                this,
-                new Vector2(0,20)
-        );
+        source = new Pin(this, new Vector2(0,30));
 
         addPin(gate);
         addPin(drain);
@@ -32,14 +23,14 @@ public abstract class Transistor extends Component {
     }
 
     public Pin getGate(){
-        return this.gate;
+        return gate;
     }
 
     public Pin getDrain(){
-        return this.drain;
+        return drain;
     }
 
     public Pin getSource(){
-        return this.source;
+        return source;
     }
 }
