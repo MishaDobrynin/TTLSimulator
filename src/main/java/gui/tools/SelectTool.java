@@ -8,11 +8,12 @@ import util.Vector2;
 /**
  * Default editor tool.
  *
- * Handles selecting circuit components.
+ * Handles selecting components.
  */
 public class SelectTool extends Tool {
 
-    private static final double SELECTION_RADIUS = 30;
+    private static final double SELECTION_DISTANCE = 25;
+
 
     @Override
     public void mousePressed(
@@ -37,28 +38,26 @@ public class SelectTool extends Tool {
 
 
         if(selected != null){
+
             canvas.getSelectionManager()
                     .select(selected);
+
         }
         else{
+
             canvas.getSelectionManager()
                     .clearSelection();
+
         }
+
 
         canvas.redraw();
     }
 
 
-    /**
-     * Finds the closest component to a world position.
-     */
     private Component findComponent(
             Vector2 position,
             CircuitCanvas canvas){
-
-        Component closest = null;
-        double closestDistance = Double.MAX_VALUE;
-
 
         for(Component component : canvas.getCircuit().getComponents()){
 
@@ -67,14 +66,14 @@ public class SelectTool extends Tool {
                             .distance(position);
 
 
-            if(distance < SELECTION_RADIUS
-                    && distance < closestDistance){
+            if(distance <= SELECTION_DISTANCE){
 
-                closest = component;
-                closestDistance = distance;
+                return component;
+
             }
         }
 
-        return closest;
+
+        return null;
     }
 }
