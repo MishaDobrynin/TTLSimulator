@@ -13,7 +13,8 @@ import util.Vector2;
 public class SelectTool extends Tool {
 
     private static final double SELECTION_DISTANCE = 25;
-
+    private Component selectedComponent;
+    private boolean dragging;
 
     @Override
     public void mousePressed(
@@ -36,24 +37,43 @@ public class SelectTool extends Tool {
                 canvas
         );
 
-
         if(selected != null){
-
-            canvas.getSelectionManager()
-                    .select(selected);
+            canvas.getSelectionManager().select(selected);
+            selectedComponent = selected;
+            dragging = true;
 
         }
         else{
-
-            canvas.getSelectionManager()
-                    .clearSelection();
-
+            canvas.getSelectionManager().clearSelection();
+            selectedComponent = null;
+            dragging = false;
         }
 
 
         canvas.redraw();
     }
 
+    @Override
+    public void mouseDragged(MouseEvent event, CircuitCanvas canvas){
+        if(!dragging || selectedComponent == null){
+            return;
+        }
+        Vector2 worldPosition =
+                canvas.getCamera().screenToWorld(
+                        new Vector2(
+                                event.getX(),
+                                event.getY()
+                        ), canvas.getWidth(), canvas.getHeight());
+
+        selectedComponent.setPosition(worldPosition);
+
+        canvas.redraw();
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent event, CircuitCanvas canvas){
+        dragging = false;
+    }
 
     private Component findComponent(
             Vector2 position,
