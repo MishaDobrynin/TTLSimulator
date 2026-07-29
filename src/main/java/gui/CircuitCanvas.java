@@ -53,6 +53,7 @@ public class CircuitCanvas extends Pane {
                 this
         );
 
+        setupKeyboardControls();
 
         backgroundCanvas.widthProperty()
                 .bind(widthProperty());
