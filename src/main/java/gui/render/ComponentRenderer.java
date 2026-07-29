@@ -86,6 +86,31 @@ public class ComponentRenderer {
     }
 
     /**
+     * Draws a selection highlight around a component.
+     */
+    public void drawSelection(
+            GraphicsContext gc,
+            Component component,
+            double viewportWidth,
+            double viewportHeight){
+
+        Vector2 screen = camera.worldToScreen(
+                component.getPosition(),
+                viewportWidth,
+                viewportHeight
+        );
+
+        gc.setStroke(Color.BLUE);
+
+        gc.strokeOval(
+                screen.getX() - 20,
+                screen.getY() - 20,
+                40,
+                40
+        );
+    }
+
+    /**
      * Draws an NMOS transistor.
      */
     public void drawNMOS(
