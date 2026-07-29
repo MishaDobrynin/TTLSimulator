@@ -1,4 +1,5 @@
 package circuit;
+
 import components.Component;
 import util.Vector2;
 
@@ -12,15 +13,19 @@ public class Pin {
     }
 
     public Component getOwner(){
-        return this.owner;
+        return owner;
     }
 
     public Vector2 getLocalPosition(){
-        return this.localPosition;
+        return localPosition;
     }
 
     public Vector2 getWorldPosition(){
-        return owner.getPosition().add(localPosition);
-    }
+        double angle = Math.toRadians(owner.getRotation());
 
+        double rotatedX = localPosition.getX() * Math.cos(angle) - localPosition.getY() * Math.sin(angle);
+        double rotatedY = localPosition.getX() * Math.sin(angle) + localPosition.getY() * Math.cos(angle);
+
+        return owner.getPosition().add(new Vector2(rotatedX, rotatedY));
+    }
 }
