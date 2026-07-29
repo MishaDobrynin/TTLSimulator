@@ -2,6 +2,7 @@ package gui.tools;
 
 import components.Component;
 import gui.CircuitCanvas;
+import gui.command.MoveComponentCommand;
 import javafx.scene.input.MouseEvent;
 import util.Vector2;
 
@@ -11,52 +12,32 @@ import util.Vector2;
  * Handles selecting and moving components.
  */
 public class SelectTool extends Tool {
-
     private static final double SELECTION_DISTANCE = 25;
-
     private boolean dragging;
-
+    private Vector2 dragStartPosition;
 
     @Override
-    public void mousePressed(
-            MouseEvent event,
-            CircuitCanvas canvas){
-
-        Vector2 worldPosition =
-                canvas.getCamera().screenToWorld(
+    public void mousePressed(MouseEvent event, CircuitCanvas canvas){
+        Vector2 worldPosition = canvas.getCamera().screenToWorld(
                         new Vector2(
                                 event.getX(),
                                 event.getY()
-                        ),
-                        canvas.getWidth(),
-                        canvas.getHeight()
-                );
+                        ), canvas.getWidth(), canvas.getHeight());
 
-
-        Component selected =
-                findComponent(
-                        worldPosition,
-                        canvas
-                );
-
+        Component selected = findComponent(worldPosition, canvas);
 
         if(selected != null){
+            canvas.getSelectionManager().select(selected);
 
-            canvas.getSelectionManager()
-                    .select(selected);
-
+            dragStartPosition = selected.getPosition();
             dragging = true;
 
         }
         else{
-
-            canvas.getSelectionManager()
-                    .clearSelection();
-
+            canvas.getSelectionManager().clearSelection();
+            dragStartPosition = null;
             dragging = false;
-
         }
-
 
         canvas.redraw();
     }
@@ -105,8 +86,26 @@ public class SelectTool extends Tool {
             MouseEvent event,
             CircuitCanvas canvas){
 
-        dragging = false;
+        if(dragging){
+            Component selected = canvas.getSelectionManager().getSelectedComponent();
 
+            if(selected != null && dragStartPosition != null){
+                Vector2 endPosition = selected.getPosition();
+
+                if(!dragStartPosition.equals(endPosition)){
+                    canvas.getCommandManager().execute(
+                            new MoveComponentCommand(
+                                    selected,
+                                    dragStartPosition,
+                                    endPosition
+                            )
+                    );
+                }
+            }
+        }
+
+        dragging = false;
+        dragStartPosition = null;
     }
 
 
