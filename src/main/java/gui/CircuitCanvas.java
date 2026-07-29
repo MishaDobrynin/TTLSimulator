@@ -70,7 +70,12 @@ public class CircuitCanvas extends Pane {
 
 
         setFocusTraversable(true);
-        requestFocus();
+
+        sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if(newScene != null){
+                requestFocus();
+            }
+        });
 
 
         ChangeListener<Number> resizeListener =
@@ -108,7 +113,7 @@ public class CircuitCanvas extends Pane {
                 redraw();
                 return;
             }
-            if (event.getCode() == KeyCode.DELETE) {
+            if (event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE) {
                 Component selected = selectionManager.getSelectedComponent();
                 if (selected != null) {
                     commandManager.execute(new DeleteComponentCommand(circuit, selected));
