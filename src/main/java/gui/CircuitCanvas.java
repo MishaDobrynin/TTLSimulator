@@ -8,6 +8,7 @@ import components.NMOS;
 import components.PMOS;
 import components.PowerNode;
 import gui.camera.Camera;
+import gui.command.RotateComponentCommand;
 import gui.render.ComponentRenderer;
 import gui.render.GridRenderer;
 import gui.selection.SelectionManager;
@@ -139,6 +140,23 @@ public class CircuitCanvas extends Pane {
                 toolManager.setCurrentTool(new PlaceComponentTool(pos -> new PowerNode(pos)), this);
             } else if (event.getCode() == KeyCode.DIGIT6) {
                 toolManager.setCurrentTool(new PlaceComponentTool(pos -> new GroundNode(pos)), this);
+            }
+            if(event.getCode() == KeyCode.R){
+                Component selected = selectionManager.getSelectedComponent();
+
+                if(selected != null){
+                    commandManager.execute(
+                            new RotateComponentCommand(
+                                    selected,
+                                    selected.getRotation(),
+                                    selected.getRotation() + 90
+                            )
+                    );
+
+                    redraw();
+                }
+
+                return;
             }
         });
     }

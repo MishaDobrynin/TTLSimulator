@@ -1,99 +1,61 @@
 package gui.render;
 
-import gui.camera.Camera;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import util.Vector2;
 import components.Component;
 import components.GroundNode;
 import components.InputNode;
 import components.NMOS;
 import components.PMOS;
 import components.PowerNode;
+import gui.camera.Camera;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import util.Vector2;
 
 public class ComponentRenderer {
+
     private final Camera camera;
 
     public ComponentRenderer(Camera camera){
         this.camera = camera;
     }
 
-    /**
-     * Draws any supported component.
-     */
-    public void drawComponent(
-            GraphicsContext gc,
-            Component component,
-            double viewportWidth,
-            double viewportHeight){
+    public void drawComponent(GraphicsContext gc, Component component, double viewportWidth, double viewportHeight){
+        Vector2 screen = camera.worldToScreen(
+                component.getPosition(),
+                viewportWidth,
+                viewportHeight
+        );
+
+        gc.save();
+
+        gc.translate(screen.getX(), screen.getY());
+        gc.rotate(component.getRotation());
 
         if(component instanceof NMOS){
-
-            drawNMOS(
-                    gc,
-                    component.getPosition(),
-                    viewportWidth,
-                    viewportHeight
-            );
-
+            drawNMOS(gc);
         }
         else if(component instanceof PMOS){
-
-            drawPMOS(
-                    gc,
-                    component.getPosition(),
-                    viewportWidth,
-                    viewportHeight
-            );
-
+            drawPMOS(gc);
         }
         else if(component instanceof InputNode){
-
-            drawInput(
-                    gc,
-                    component.getPosition(),
-                    viewportWidth,
-                    viewportHeight
-            );
-
+            drawInput(gc);
         }
         else if(component instanceof PowerNode){
-
-            drawPower(
-                    gc,
-                    component.getPosition(),
-                    viewportWidth,
-                    viewportHeight
-            );
-
+            drawPower(gc);
         }
         else if(component instanceof GroundNode){
-
-            drawGround(
-                    gc,
-                    component.getPosition(),
-                    viewportWidth,
-                    viewportHeight
-            );
-
+            drawGround(gc);
         }
         else{
             throw new IllegalArgumentException(
-                    "Unsupported component type: "
-                            + component.getClass().getSimpleName()
+                    "Unsupported component type: " + component.getClass().getSimpleName()
             );
         }
+
+        gc.restore();
     }
 
-    /**
-     * Draws a selection highlight around a component.
-     */
-    public void drawSelection(
-            GraphicsContext gc,
-            Component component,
-            double viewportWidth,
-            double viewportHeight){
-
+    public void drawSelection(GraphicsContext gc, Component component, double viewportWidth, double viewportHeight){
         Vector2 screen = camera.worldToScreen(
                 component.getPosition(),
                 viewportWidth,
@@ -101,194 +63,50 @@ public class ComponentRenderer {
         );
 
         gc.setStroke(Color.BLUE);
-
-        gc.strokeOval(
-                screen.getX() - 20,
-                screen.getY() - 20,
-                40,
-                40
-        );
+        gc.strokeOval(screen.getX() - 20, screen.getY() - 20, 40, 40);
     }
 
-    /**
-     * Draws an NMOS transistor.
-     */
-    public void drawNMOS(
-            GraphicsContext gc,
-            Vector2 worldPosition,
-            double viewportWidth,
-            double viewportHeight){
-
-        Vector2 screen = camera.worldToScreen(
-                worldPosition,
-                viewportWidth,
-                viewportHeight
-        );
-
-        drawTransistor(
-                gc,
-                screen,
-                "N"
-        );
+    private void drawNMOS(GraphicsContext gc){
+        drawTransistor(gc, "N");
     }
 
-    /**
-     * Draws a PMOS transistor.
-     */
-    public void drawPMOS(
-            GraphicsContext gc,
-            Vector2 worldPosition,
-            double viewportWidth,
-            double viewportHeight){
-
-        Vector2 screen = camera.worldToScreen(
-                worldPosition,
-                viewportWidth,
-                viewportHeight
-        );
-
-        drawTransistor(
-                gc,
-                screen,
-                "P"
-        );
+    private void drawPMOS(GraphicsContext gc){
+        drawTransistor(gc, "P");
     }
 
-    /**
-     * Draws an input node.
-     */
-    public void drawInput(
-            GraphicsContext gc,
-            Vector2 worldPosition,
-            double viewportWidth,
-            double viewportHeight){
-
-        Vector2 screen = camera.worldToScreen(
-                worldPosition,
-                viewportWidth,
-                viewportHeight
-        );
-
+    private void drawInput(GraphicsContext gc){
         gc.setStroke(Color.BLACK);
 
-        gc.strokeOval(
-                screen.getX()-8,
-                screen.getY()-8,
-                16,
-                16
-        );
-
-        gc.strokeText(
-                "IN",
-                screen.getX()-8,
-                screen.getY()-12
-        );
+        gc.strokeOval(-8, -8, 16, 16);
+        gc.strokeText("IN", -8, -12);
     }
 
-    /**
-     * Draws a power node.
-     */
-    public void drawPower(
-            GraphicsContext gc,
-            Vector2 worldPosition,
-            double viewportWidth,
-            double viewportHeight){
-
-        Vector2 screen = camera.worldToScreen(
-                worldPosition,
-                viewportWidth,
-                viewportHeight
-        );
-
-        double x = screen.getX();
-        double y = screen.getY();
-
+    private void drawPower(GraphicsContext gc){
         gc.setStroke(Color.BLACK);
 
-        gc.strokeLine(x,y+12,x,y-12);
-        gc.strokeLine(x-8,y-12,x+8,y-12);
-
-        gc.strokeText(
-                "VDD",
-                x-12,
-                y-18
-        );
+        gc.strokeLine(0, 12, 0, -12);
+        gc.strokeLine(-8, -12, 8, -12);
+        gc.strokeText("VDD", -12, -18);
     }
 
-    /**
-     * Draws a ground node.
-     */
-    public void drawGround(
-            GraphicsContext gc,
-            Vector2 worldPosition,
-            double viewportWidth,
-            double viewportHeight){
-
-        Vector2 screen = camera.worldToScreen(
-                worldPosition,
-                viewportWidth,
-                viewportHeight
-        );
-
-        double x = screen.getX();
-        double y = screen.getY();
-
+    private void drawGround(GraphicsContext gc){
         gc.setStroke(Color.BLACK);
 
-        gc.strokeLine(x,y-10,x,y);
-
-        gc.strokeLine(x-8,y,x+8,y);
-
-        gc.strokeLine(x-5,y+4,x+5,y+4);
-
-        gc.strokeLine(x-2,y+8,x+2,y+8);
+        gc.strokeLine(0, -10, 0, 0);
+        gc.strokeLine(-8, 0, 8, 0);
+        gc.strokeLine(-5, 4, 5, 4);
+        gc.strokeLine(-2, 8, 2, 8);
     }
 
-    /**
-     * Shared transistor drawing routine.
-     */
-    private void drawTransistor(
-            GraphicsContext gc,
-            Vector2 screen,
-            String label){
-
-        double x = screen.getX();
-        double y = screen.getY();
-
+    private void drawTransistor(GraphicsContext gc, String label){
         gc.setStroke(Color.BLACK);
 
-        gc.strokeRect(
-                x-12,
-                y-20,
-                24,
-                40
-        );
+        gc.strokeRect(-12, -20, 24, 40);
 
-        gc.strokeLine(
-                x-20,
-                y,
-                x-12,
-                y
-        );
+        gc.strokeLine(-20, 0, -12, 0);
+        gc.strokeLine(0, -30, 0, -20);
+        gc.strokeLine(0, 20, 0, 30);
 
-        gc.strokeLine(
-                x,
-                y-30,
-                x,
-                y-20
-        );
-
-        gc.strokeLine(
-                x,
-                y+20,
-                x,
-                y+30
-        );
-
-        gc.strokeText(
-                label,
-                x-4,
-                y+4
-        );
+        gc.strokeText(label, -4, 4);
     }
 }
