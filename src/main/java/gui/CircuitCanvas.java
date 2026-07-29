@@ -17,6 +17,7 @@ import gui.tools.SelectTool;
 import gui.tools.ToolManager;
 import gui.command.CommandManager;
 import gui.command.DeleteComponentCommand;
+import gui.tools.WireTool;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -140,6 +141,8 @@ public class CircuitCanvas extends Pane {
                 toolManager.setCurrentTool(new PlaceComponentTool(pos -> new PowerNode(pos)), this);
             } else if (event.getCode() == KeyCode.DIGIT6) {
                 toolManager.setCurrentTool(new PlaceComponentTool(pos -> new GroundNode(pos)), this);
+            } else if(event.getCode() == KeyCode.DIGIT7){
+                toolManager.setCurrentTool(new WireTool(), this);
             }
             if(event.getCode() == KeyCode.R){
                 Component selected = selectionManager.getSelectedComponent();
