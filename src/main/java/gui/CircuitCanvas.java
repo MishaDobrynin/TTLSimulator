@@ -103,12 +103,17 @@ public class CircuitCanvas extends Pane {
 
     private void setupKeyboardControls() {
         setOnKeyPressed(event -> {
-            if (event.isControlDown() && event.getCode() == KeyCode.Z) {
+            if ((event.isControlDown() || event.isMetaDown()) && event.getCode() == KeyCode.Z) {
                 commandManager.undo();
                 redraw();
                 return;
             }
-            if (event.isControlDown() && event.getCode() == KeyCode.Y) {
+            if ( (event.isMetaDown() || event.isControlDown()) && event.isShiftDown() && event.getCode() == KeyCode.Z) { //cmmnd shift z
+                commandManager.redo();
+                redraw();
+                return;
+            }
+            if ((event.isControlDown() || event.isMetaDown()) && event.getCode() == KeyCode.Y) {
                 commandManager.redo();
                 redraw();
                 return;
