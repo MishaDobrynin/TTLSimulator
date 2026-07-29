@@ -14,6 +14,8 @@ import gui.selection.SelectionManager;
 import gui.tools.PlaceComponentTool;
 import gui.tools.SelectTool;
 import gui.tools.ToolManager;
+import gui.command.CommandManager;
+import gui.command.DeleteComponentCommand;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -34,9 +36,10 @@ public class CircuitCanvas extends Pane {
 
     private final Circuit circuit;
 
+    private final CommandManager commandManager;
+
 
     public CircuitCanvas(Camera camera, Circuit circuit){
-
         this.camera = camera;
         this.circuit = circuit;
 
@@ -47,6 +50,7 @@ public class CircuitCanvas extends Pane {
 
         selectionManager = new SelectionManager();
         toolManager = new ToolManager();
+        commandManager = new CommandManager();
 
         toolManager.setCurrentTool(
                 new SelectTool(),
@@ -88,84 +92,47 @@ public class CircuitCanvas extends Pane {
         setOnMouseMoved(event ->
                 toolManager.mouseMoved(event, this));
 
-
-        setupKeyboardControls();
-
-
         redraw();
     }
 
 
-    private void setupKeyboardControls(){
-
+    private void setupKeyboardControls() {
         setOnKeyPressed(event -> {
-
-            if(event.getCode() == KeyCode.DIGIT1){
-
-                toolManager.setCurrentTool(
-                        new SelectTool(),
-                        this
-                );
-
+            if (event.isControlDown() && event.getCode() == KeyCode.Z) {
+                commandManager.undo();
+                redraw();
+                return;
             }
-
-            else if(event.getCode() == KeyCode.DIGIT2){
-
-                toolManager.setCurrentTool(
-                        new PlaceComponentTool(
-                                position -> new NMOS(position)
-                        ),
-                        this
-                );
-
+            if (event.isControlDown() && event.getCode() == KeyCode.Y) {
+                commandManager.redo();
+                redraw();
+                return;
             }
-
-            else if(event.getCode() == KeyCode.DIGIT3){
-
-                toolManager.setCurrentTool(
-                        new PlaceComponentTool(
-                                position -> new PMOS(position)
-                        ),
-                        this
-                );
-
+            if (event.getCode() == KeyCode.DELETE) {
+                Component selected = selectionManager.getSelectedComponent();
+                if (selected != null) {
+                    commandManager.execute(new DeleteComponentCommand(circuit, selected));
+                    selectionManager.clearSelection();
+                    redraw();
+                }
+                return;
             }
-
-            else if(event.getCode() == KeyCode.DIGIT4){
-
-                toolManager.setCurrentTool(
-                        new PlaceComponentTool(
-                                position -> new InputNode(position)
-                        ),
-                        this
-                );
-
+            if (event.getCode() == KeyCode.DIGIT1) {
+                toolManager.setCurrentTool(new SelectTool(), this);
+            } else if (event.getCode() == KeyCode.DIGIT2) {
+                toolManager.setCurrentTool(new PlaceComponentTool(pos -> new NMOS(pos)), this);
+            } else if (event.getCode() == KeyCode.DIGIT3) {
+                toolManager.setCurrentTool(new PlaceComponentTool(pos -> new PMOS(pos)), this);
+            } else if (event.getCode() == KeyCode.DIGIT4) {
+                toolManager.setCurrentTool(new PlaceComponentTool(pos -> new InputNode(pos)), this);
+            } else if (event.getCode() == KeyCode.DIGIT5) {
+                toolManager.setCurrentTool(new PlaceComponentTool(pos -> new PowerNode(pos)), this);
+            } else if (event.getCode() == KeyCode.DIGIT6) {
+                toolManager.setCurrentTool(new PlaceComponentTool(pos -> new GroundNode(pos)), this);
             }
-
-            else if(event.getCode() == KeyCode.DIGIT5){
-
-                toolManager.setCurrentTool(
-                        new PlaceComponentTool(
-                                position -> new PowerNode(position)
-                        ),
-                        this
-                );
-
-            }
-
-            else if(event.getCode() == KeyCode.DIGIT6){
-
-                toolManager.setCurrentTool(
-                        new PlaceComponentTool(
-                                position -> new GroundNode(position)
-                        ),
-                        this
-                );
-
-            }
-
         });
     }
+
 
 
     public Camera getCamera(){
@@ -177,11 +144,13 @@ public class CircuitCanvas extends Pane {
         return circuit;
     }
 
-
     public SelectionManager getSelectionManager(){
         return selectionManager;
     }
 
+    public CommandManager getCommandManager(){
+        return commandManager;
+    }
 
     public void redraw(){
 
