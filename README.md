@@ -17,6 +17,9 @@ This allows each system to be developed and tested independently.
 
 The project uses Gradle.
 
+# AS A RESULT I HAVE TO KEEP UPDATING GIT
+## THEREFORE THERE ARE MANY COMMITS WITH ONLY ONE METHOD CHANGED
+
 Requirements:
 - Java 21
 
