@@ -1,6 +1,8 @@
 package gui.tools;
 
 import gui.CircuitCanvas;
+import components.Component;
+import gui.command.PlaceComponentCommand;
 import javafx.scene.input.MouseEvent;
 import util.Vector2;
 
@@ -29,9 +31,16 @@ public class PlaceComponentTool extends Tool {
                         canvas.getHeight()
                 );
 
-        canvas.getCircuit().addComponent(
-                componentFactory.create(worldPosition)
-        );
+        Component component =
+                componentFactory.create(worldPosition);
+
+        canvas.getCommandManager()
+                .execute(
+                        new PlaceComponentCommand(
+                                canvas.getCircuit(),
+                                component
+                        )
+                );
 
         canvas.redraw();
     }
