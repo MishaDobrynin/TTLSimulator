@@ -4,6 +4,7 @@ import components.Component;
 import util.Vector2;
 
 public class Pin {
+
     private final Component owner;
     private final Vector2 localPosition;
 
@@ -23,9 +24,34 @@ public class Pin {
     public Vector2 getWorldPosition(){
         double angle = Math.toRadians(owner.getRotation());
 
-        double rotatedX = localPosition.getX() * Math.cos(angle) - localPosition.getY() * Math.sin(angle);
-        double rotatedY = localPosition.getX() * Math.sin(angle) + localPosition.getY() * Math.cos(angle);
+        double rotatedX = localPosition.getX() * Math.cos(angle)
+                - localPosition.getY() * Math.sin(angle);
 
-        return owner.getPosition().add(new Vector2(rotatedX, rotatedY));
+        double rotatedY = localPosition.getX() * Math.sin(angle)
+                + localPosition.getY() * Math.cos(angle);
+
+        return owner.getPosition().add(
+                new Vector2(rotatedX, rotatedY)
+        );
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(this == obj){
+            return true;
+        }
+
+        if(!(obj instanceof Pin other)){
+            return false;
+        }
+
+        return owner == other.owner
+                && localPosition.equals(other.localPosition);
+    }
+
+    @Override
+    public int hashCode(){
+        return 31 * System.identityHashCode(owner)
+                + localPosition.hashCode();
     }
 }

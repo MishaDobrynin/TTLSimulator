@@ -1,5 +1,6 @@
 package circuit;
 import components.Component;
+import circuit.Pin;
 import java.util.ArrayList;
 import java.util.List;
 //test on new git push aftter refactoring and deleting old branch
@@ -35,5 +36,18 @@ public class Circuit {
     }
     public List<Wire> getWires(){
         return wires;
+    }
+    public Net getNet(Pin pin){
+        for(Net net : nets){
+            if(net.containsPin(pin)){
+                return net;
+            }
+        }
+
+        return null;
+    }
+
+    public void removeNet(Net net){
+        nets.remove(net);
     }
 }
