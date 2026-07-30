@@ -225,7 +225,7 @@ public class CircuitCanvas extends Pane {
             );
 
             if(selectionManager.isSelected(wire)){
-                wireRenderer.drawWire(
+                wireRenderer.drawSelection(
                         gc,
                         wire.getStartPosition(),
                         wire.getEndPosition(),
