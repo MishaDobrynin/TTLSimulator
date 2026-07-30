@@ -215,6 +215,7 @@ public class CircuitCanvas extends Pane {
         gridRenderer.render(gc, width, height);
 
         for(Wire wire : circuit.getWires()){
+
             wireRenderer.drawWire(
                     gc,
                     wire.getStartPosition(),
@@ -222,6 +223,16 @@ public class CircuitCanvas extends Pane {
                     width,
                     height
             );
+
+            if(selectionManager.isSelected(wire)){
+                wireRenderer.drawWire(
+                        gc,
+                        wire.getStartPosition(),
+                        wire.getEndPosition(),
+                        width,
+                        height
+                );
+            }
         }
 
         for(Component component : circuit.getComponents()){
