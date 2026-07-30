@@ -2,7 +2,7 @@ package circuit;
 import components.Component;
 import java.util.ArrayList;
 import java.util.List;
-
+//test on new git push aftter refactoring and deleting old branch
 public class Circuit {
     private final List<Component> components;
     private final List<Net> nets;
