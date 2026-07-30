@@ -2,15 +2,18 @@ package circuit;
 
 import java.util.ArrayList;
 import java.util.List;
+import simulation.Voltage;
 
 public class Net {
 
     private final List<Pin> pins;
     private final List<Wire> wires;
+    private Voltage voltage;
 
     public Net(){
         pins = new ArrayList<>();
         wires = new ArrayList<>();
+        voltage = Voltage.FLOATING;
     }
 
     public void addPin(Pin pin){
@@ -47,6 +50,14 @@ public class Net {
 
     public List<Wire> getWires(){
         return wires;
+    }
+
+    public Voltage getVoltage(){
+        return voltage;
+    }
+
+    public void setVoltage(Voltage voltage){
+        this.voltage = voltage;
     }
 
     public boolean isEmpty(){

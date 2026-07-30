@@ -2,14 +2,18 @@ package components;
 
 import circuit.Pin;
 import util.Vector2;
+import simulation.Voltage;
 
 public class InputNode extends Component {
 
     private final Pin output;
-    private boolean state;
+
+    private Voltage voltage;
 
     public InputNode(Vector2 position){
         super(position);
+
+        voltage = Voltage.LOW;
 
         output = new Pin(
                 this,
@@ -17,19 +21,22 @@ public class InputNode extends Component {
         );
 
         addPin(output);
-
-        state = false;
     }
 
     public Pin getOutput(){
         return output;
     }
 
-    public boolean getState(){
-        return state;
+    public Voltage getVoltage(){
+        return voltage;
     }
 
-    public void setState(boolean state){
-        this.state = state;
+    public void toggle(){
+        if(voltage == Voltage.LOW){
+            voltage = Voltage.HIGH;
+        }
+        else{
+            voltage = Voltage.LOW;
+        }
     }
 }

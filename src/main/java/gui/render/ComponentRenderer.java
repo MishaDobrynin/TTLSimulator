@@ -20,6 +20,7 @@ public class ComponentRenderer {
     }
 
     public void drawComponent(GraphicsContext gc, Component component, double viewportWidth, double viewportHeight){
+
         Vector2 screen = camera.worldToScreen(
                 component.getPosition(),
                 viewportWidth,
@@ -56,6 +57,7 @@ public class ComponentRenderer {
     }
 
     public void drawSelection(GraphicsContext gc, Component component, double viewportWidth, double viewportHeight){
+
         Vector2 screen = camera.worldToScreen(
                 component.getPosition(),
                 viewportWidth,
@@ -63,7 +65,13 @@ public class ComponentRenderer {
         );
 
         gc.setStroke(Color.BLUE);
-        gc.strokeOval(screen.getX() - 20, screen.getY() - 20, 40, 40);
+
+        gc.strokeOval(
+                screen.getX() - 20,
+                screen.getY() - 20,
+                40,
+                40
+        );
     }
 
     private void drawNMOS(GraphicsContext gc){
@@ -75,6 +83,7 @@ public class ComponentRenderer {
     }
 
     private void drawInput(GraphicsContext gc){
+
         gc.setStroke(Color.BLACK);
 
         gc.strokeOval(-8, -8, 16, 16);
@@ -82,6 +91,7 @@ public class ComponentRenderer {
     }
 
     private void drawPower(GraphicsContext gc){
+
         gc.setStroke(Color.BLACK);
 
         gc.strokeLine(0, 12, 0, -12);
@@ -90,6 +100,7 @@ public class ComponentRenderer {
     }
 
     private void drawGround(GraphicsContext gc){
+
         gc.setStroke(Color.BLACK);
 
         gc.strokeLine(0, -10, 0, 0);
@@ -99,14 +110,31 @@ public class ComponentRenderer {
     }
 
     private void drawTransistor(GraphicsContext gc, String label){
+
         gc.setStroke(Color.BLACK);
 
         gc.strokeRect(-12, -20, 24, 40);
 
+        // Gate
         gc.strokeLine(-20, 0, -12, 0);
+
+        // Drain
         gc.strokeLine(0, -30, 0, -20);
+
+        // Source
         gc.strokeLine(0, 20, 0, 30);
 
         gc.strokeText(label, -4, 4);
+
+        drawTransistorLabels(gc);
+    }
+
+    private void drawTransistorLabels(GraphicsContext gc){
+
+        gc.setFill(Color.BLACK);
+
+        gc.fillText("G", -32, 5);
+        gc.fillText("D", 5, -25);
+        gc.fillText("S", 5, 35);
     }
 }

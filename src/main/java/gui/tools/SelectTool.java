@@ -2,6 +2,7 @@ package gui.tools;
 
 import circuit.Wire;
 import components.Component;
+import components.InputNode;
 import gui.CircuitCanvas;
 import gui.command.MoveComponentCommand;
 import javafx.scene.input.MouseEvent;
@@ -28,6 +29,18 @@ public class SelectTool extends Tool {
 
         Component selectedComponent =
                 findComponent(worldPosition, canvas);
+
+        if(selectedComponent instanceof InputNode inputNode){
+            canvas.getSelectionManager().select(inputNode);
+
+            dragging = false;
+            dragStartPosition = null;
+
+            inputNode.toggle();
+            canvas.simulate();
+            canvas.redraw();
+            return;
+        }
 
         if(selectedComponent != null){
 

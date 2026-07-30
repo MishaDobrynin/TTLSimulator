@@ -1,6 +1,7 @@
 package gui;
 
 import circuit.Circuit;
+import circuit.Net;
 import circuit.Wire;
 import components.Component;
 import components.GroundNode;
@@ -11,46 +12,50 @@ import components.PowerNode;
 import gui.camera.Camera;
 import gui.command.CommandManager;
 import gui.command.DeleteComponentCommand;
+import gui.command.DeleteWireCommand;
 import gui.command.RotateComponentCommand;
 import gui.render.ComponentRenderer;
 import gui.render.GridRenderer;
+import gui.render.VoltageRenderer;
 import gui.render.WireRenderer;
 import gui.selection.SelectionManager;
 import gui.tools.PlaceComponentTool;
 import gui.tools.SelectTool;
 import gui.tools.ToolManager;
 import gui.tools.WireTool;
-import gui.command.DeleteWireCommand;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import simulation.SimulationEngine;
 
 public class CircuitCanvas extends Pane {
 
     private final Canvas backgroundCanvas;
-
     private final Camera camera;
     private final GridRenderer gridRenderer;
     private final ComponentRenderer componentRenderer;
     private final WireRenderer wireRenderer;
-
+    private final VoltageRenderer voltageRenderer;
     private final ToolManager toolManager;
     private final SelectionManager selectionManager;
-
     private final Circuit circuit;
-
     private final CommandManager commandManager;
+    private final SimulationEngine simulationEngine;
 
     public CircuitCanvas(Camera camera, Circuit circuit){
+
         this.camera = camera;
         this.circuit = circuit;
 
         gridRenderer = new GridRenderer(camera);
         componentRenderer = new ComponentRenderer(camera);
         wireRenderer = new WireRenderer(camera);
+        voltageRenderer = new VoltageRenderer(camera);
+
+        simulationEngine = new SimulationEngine();
 
         backgroundCanvas = new Canvas();
 
@@ -85,33 +90,47 @@ public class CircuitCanvas extends Pane {
         setOnMouseDragged(event -> toolManager.mouseDragged(event, this));
         setOnMouseMoved(event -> toolManager.mouseMoved(event, this));
 
+        simulate();
         redraw();
     }
 
-    private void setupKeyboardControls() {
+    private void setupKeyboardControls(){
+
         setOnKeyPressed(event -> {
+
             if((event.isControlDown() || event.isMetaDown()) && event.getCode() == KeyCode.Z){
+
                 commandManager.undo();
+
+                simulate();
                 redraw();
+
                 return;
             }
 
             if((event.isMetaDown() || event.isControlDown()) && event.isShiftDown() && event.getCode() == KeyCode.Z){
+
                 commandManager.redo();
+
+                simulate();
                 redraw();
+
                 return;
             }
 
             if((event.isControlDown() || event.isMetaDown()) && event.getCode() == KeyCode.Y){
+
                 commandManager.redo();
+
+                simulate();
                 redraw();
+
                 return;
             }
 
             if(event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE){
 
-                Component selectedComponent =
-                        selectionManager.getSelectedComponent();
+                Component selectedComponent = selectionManager.getSelectedComponent();
 
                 if(selectedComponent != null){
 
@@ -123,12 +142,14 @@ public class CircuitCanvas extends Pane {
                     );
 
                     selectionManager.clearSelection();
+
+                    simulate();
                     redraw();
+
                     return;
                 }
 
-                Wire selectedWire =
-                        selectionManager.getSelectedWire();
+                Wire selectedWire = selectionManager.getSelectedWire();
 
                 if(selectedWire != null){
 
@@ -140,7 +161,10 @@ public class CircuitCanvas extends Pane {
                     );
 
                     selectionManager.clearSelection();
+
+                    simulate();
                     redraw();
+
                     return;
                 }
             }
@@ -168,9 +192,11 @@ public class CircuitCanvas extends Pane {
             }
 
             if(event.getCode() == KeyCode.R){
+
                 Component selected = selectionManager.getSelectedComponent();
 
                 if(selected != null){
+
                     commandManager.execute(
                             new RotateComponentCommand(
                                     selected,
@@ -179,12 +205,17 @@ public class CircuitCanvas extends Pane {
                             )
                     );
 
+                    simulate();
                     redraw();
                 }
 
                 return;
             }
         });
+    }
+
+    public void simulate(){
+        simulationEngine.simulate(circuit);
     }
 
     public Camera getCamera(){
@@ -204,6 +235,7 @@ public class CircuitCanvas extends Pane {
     }
 
     public void redraw(){
+
         GraphicsContext gc = backgroundCanvas.getGraphicsContext2D();
 
         double width = backgroundCanvas.getWidth();
@@ -216,40 +248,33 @@ public class CircuitCanvas extends Pane {
 
         for(Wire wire : circuit.getWires()){
 
-            wireRenderer.drawWire(
-                    gc,
-                    wire.getStartPosition(),
-                    wire.getEndPosition(),
-                    width,
-                    height
-            );
+            wireRenderer.drawWire(gc, wire.getStartPosition(), wire.getEndPosition(), width, height);
 
-            if(selectionManager.isSelected(wire)){
-                wireRenderer.drawSelection(
+            Net net = circuit.getNet(wire.getStart());
+
+            if(net != null){
+
+                voltageRenderer.drawVoltage(
                         gc,
                         wire.getStartPosition(),
                         wire.getEndPosition(),
+                        net.getVoltage(),
                         width,
                         height
                 );
             }
+
+            if(selectionManager.isSelected(wire)){
+                wireRenderer.drawSelection(gc, wire.getStartPosition(), wire.getEndPosition(), width, height);
+            }
         }
 
         for(Component component : circuit.getComponents()){
-            componentRenderer.drawComponent(
-                    gc,
-                    component,
-                    width,
-                    height
-            );
+
+            componentRenderer.drawComponent(gc, component, width, height);
 
             if(selectionManager.isSelected(component)){
-                componentRenderer.drawSelection(
-                        gc,
-                        component,
-                        width,
-                        height
-                );
+                componentRenderer.drawSelection(gc, component, width, height);
             }
         }
     }
