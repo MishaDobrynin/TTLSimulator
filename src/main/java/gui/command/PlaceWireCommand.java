@@ -5,12 +5,20 @@ import circuit.Net;
 import circuit.Pin;
 import circuit.Wire;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PlaceWireCommand implements Command {
 
     private final Circuit circuit;
     private final Wire wire;
+
     private Net createdNet;
+
     private Net mergedNet;
+    private Net mergedIntoNet;
+    private List<Pin> originalPins;
+    private List<Wire> originalWires;
 
     public PlaceWireCommand(Circuit circuit, Wire wire){
         this.circuit = circuit;
@@ -45,11 +53,16 @@ public class PlaceWireCommand implements Command {
             endNet.addWire(wire);
         }
         else if(startNet != endNet){
+            mergedIntoNet = startNet;
+            mergedNet = endNet;
+
+            originalPins = new ArrayList<>(startNet.getPins());
+            originalWires = new ArrayList<>(startNet.getWires());
+
             startNet.merge(endNet);
             startNet.addWire(wire);
 
-            circuit.getNets().remove(endNet);
-            mergedNet = endNet;
+            circuit.removeNet(endNet);
         }
         else{
             startNet.addWire(wire);
@@ -61,7 +74,18 @@ public class PlaceWireCommand implements Command {
         circuit.getWires().remove(wire);
 
         if(createdNet != null){
-            circuit.getNets().remove(createdNet);
+            circuit.removeNet(createdNet);
+            return;
+        }
+
+        if(mergedNet != null){
+            mergedIntoNet.getPins().clear();
+            mergedIntoNet.getWires().clear();
+
+            mergedIntoNet.getPins().addAll(originalPins);
+            mergedIntoNet.getWires().addAll(originalWires);
+
+            circuit.addNet(mergedNet);
             return;
         }
 
@@ -69,12 +93,14 @@ public class PlaceWireCommand implements Command {
 
         if(net != null){
             net.removeWire(wire);
-            net.removePin(wire.getStart());
-            net.removePin(wire.getEnd());
-        }
 
-        if(mergedNet != null){
-            circuit.addNet(mergedNet);
+            if(net.containsPin(wire.getStart())){
+                net.removePin(wire.getStart());
+            }
+
+            if(net.containsPin(wire.getEnd())){
+                net.removePin(wire.getEnd());
+            }
         }
     }
 }
