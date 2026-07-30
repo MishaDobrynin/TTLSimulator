@@ -62,4 +62,49 @@ public class Net {
             addWire(wire);
         }
     }
+    public List<List<Pin>> getConnectedGroups(){
+        List<List<Pin>> groups = new ArrayList<>();
+        List<Pin> unvisited = new ArrayList<>(pins);
+
+        while(!unvisited.isEmpty()){
+            List<Pin> group = new ArrayList<>();
+            List<Pin> queue = new ArrayList<>();
+
+            Pin start = unvisited.remove(0);
+            queue.add(start);
+
+            while(!queue.isEmpty()){
+                Pin current = queue.remove(0);
+
+                if(group.contains(current)){
+                    continue;
+                }
+
+                group.add(current);
+                unvisited.remove(current);
+
+                for(Wire wire : wires){
+                    if(wire.getStart().equals(current)){
+                        Pin connected = wire.getEnd();
+
+                        if(!group.contains(connected)){
+                            queue.add(connected);
+                        }
+                    }
+
+                    if(wire.getEnd().equals(current)){
+                        Pin connected = wire.getStart();
+
+                        if(!group.contains(connected)){
+                            queue.add(connected);
+                        }
+                    }
+                }
+            }
+
+            groups.add(group);
+        }
+
+        return groups;
+    }
 }
