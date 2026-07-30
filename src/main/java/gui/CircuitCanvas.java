@@ -20,6 +20,7 @@ import gui.tools.PlaceComponentTool;
 import gui.tools.SelectTool;
 import gui.tools.ToolManager;
 import gui.tools.WireTool;
+import gui.command.DeleteWireCommand;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -108,15 +109,40 @@ public class CircuitCanvas extends Pane {
             }
 
             if(event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE){
-                Component selected = selectionManager.getSelectedComponent();
 
-                if(selected != null){
-                    commandManager.execute(new DeleteComponentCommand(circuit, selected));
+                Component selectedComponent =
+                        selectionManager.getSelectedComponent();
+
+                if(selectedComponent != null){
+
+                    commandManager.execute(
+                            new DeleteComponentCommand(
+                                    circuit,
+                                    selectedComponent
+                            )
+                    );
+
                     selectionManager.clearSelection();
                     redraw();
+                    return;
                 }
 
-                return;
+                Wire selectedWire =
+                        selectionManager.getSelectedWire();
+
+                if(selectedWire != null){
+
+                    commandManager.execute(
+                            new DeleteWireCommand(
+                                    circuit,
+                                    selectedWire
+                            )
+                    );
+
+                    selectionManager.clearSelection();
+                    redraw();
+                    return;
+                }
             }
 
             if(event.getCode() == KeyCode.DIGIT1){

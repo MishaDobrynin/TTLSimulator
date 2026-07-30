@@ -1,32 +1,59 @@
 package gui.selection;
 
 import components.Component;
+import circuit.Wire;
 
 public class SelectionManager {
 
     private Component selectedComponent;
+    private Wire selectedWire;
 
-    public SelectionManager() {
+    public SelectionManager(){
         selectedComponent = null;
+        selectedWire = null;
     }
 
-    public void select(Component component) {
+    public void select(Component component){
         selectedComponent = component;
+        selectedWire = null;
     }
 
-    public void clearSelection() {
+    public void select(Wire wire){
+        selectedWire = wire;
         selectedComponent = null;
     }
 
-    public Component getSelectedComponent() {
+    public void clearSelection(){
+        selectedComponent = null;
+        selectedWire = null;
+    }
+
+    public Component getSelectedComponent(){
         return selectedComponent;
     }
 
-    public boolean hasSelection() {
+    public Wire getSelectedWire(){
+        return selectedWire;
+    }
+
+    public boolean hasSelection(){
+        return selectedComponent != null
+                || selectedWire != null;
+    }
+
+    public boolean hasComponentSelection(){
         return selectedComponent != null;
     }
 
-    public boolean isSelected(Component component) {
+    public boolean hasWireSelection(){
+        return selectedWire != null;
+    }
+
+    public boolean isSelected(Component component){
         return selectedComponent == component;
+    }
+
+    public boolean isSelected(Wire wire){
+        return selectedWire == wire;
     }
 }
