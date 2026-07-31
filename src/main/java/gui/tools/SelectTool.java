@@ -8,6 +8,8 @@ import gui.command.MoveComponentCommand;
 import javafx.scene.input.MouseEvent;
 import util.Vector2;
 
+import static gui.render.GridRenderer.GRID_SPACING;
+
 public class SelectTool extends Tool {
 
     private static final double SELECTION_DISTANCE = 25;
@@ -98,7 +100,7 @@ public class SelectTool extends Tool {
                         canvas.getHeight()
                 );
 
-        selected.setPosition(worldPosition);
+        selected.setPosition(Vector2.snap(worldPosition, GRID_SPACING));
 
         canvas.redraw();
     }
@@ -106,26 +108,16 @@ public class SelectTool extends Tool {
 
     @Override
     public void mouseReleased(MouseEvent event, CircuitCanvas canvas){
-
         if(dragging){
-
-            Component selected =
-                    canvas.getSelectionManager()
-                            .getSelectedComponent();
-
+            Component selected = canvas.getSelectionManager().getSelectedComponent();
             if(selected != null && dragStartPosition != null){
-
                 Vector2 endPosition = selected.getPosition();
-
                 if(!dragStartPosition.equals(endPosition)){
-
                     canvas.getCommandManager().execute(
-                            new MoveComponentCommand(
-                                    selected,
-                                    dragStartPosition,
-                                    endPosition
-                            )
+                            new MoveComponentCommand(selected, dragStartPosition, endPosition)
                     );
+                    canvas.simulate();
+                    canvas.redraw();
                 }
             }
         }

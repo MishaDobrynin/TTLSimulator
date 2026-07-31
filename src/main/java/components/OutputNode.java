@@ -21,4 +21,8 @@ public class OutputNode extends Component {
         }
         return net.getVoltage();
     }
+    @Override
+    public String getID(){
+        return "OutPin";
+    }
 }

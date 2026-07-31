@@ -39,4 +39,8 @@ public class InputNode extends Component {
             voltage = Voltage.LOW;
         }
     }
+    @Override
+    public String getID(){
+        return "InputPin";
+    }
 }

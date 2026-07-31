@@ -17,4 +17,8 @@ public class PowerNode extends Component {
     public Pin getOutput(){
         return this.output;
     }
+    @Override
+    public String getID(){
+        return "PowerNode";
+    }
 }

@@ -67,11 +67,16 @@ public class Vector2 {
     @Override //don't overload
     public boolean equals(Object ob){
         if(this==ob)return true;
-        if(!(ob instanceof Vector2)){
+        if(!(ob instanceof Vector2 other)){
             return false;
         }
-        Vector2 other = (Vector2) ob;
         return Double.compare(this.x, other.x) ==0 && Double.compare(this.y, other.y)==0;
+    }
+    public static Vector2 snap(Vector2 position, double spacing){
+        double x = Math.round(position.getX() / spacing) * spacing;
+        double y = Math.round(position.getY() / spacing) * spacing;
+
+        return new Vector2(x, y);
     }
     @Override
     public int hashCode(){

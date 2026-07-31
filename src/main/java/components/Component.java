@@ -38,4 +38,6 @@ public abstract class Component {
     public List<Pin> getPins(){
         return this.pins;
     }
+
+    public abstract String getID();
 }

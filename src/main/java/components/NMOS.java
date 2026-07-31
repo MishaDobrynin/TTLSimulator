@@ -4,4 +4,8 @@ public class NMOS extends Transistor {
     public NMOS(Vector2 position){
         super(position);
     }
+    @Override
+    public String getID(){
+        return "NMOS";
+    }
 }

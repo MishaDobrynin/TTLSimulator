@@ -6,6 +6,8 @@ import gui.command.PlaceComponentCommand;
 import javafx.scene.input.MouseEvent;
 import util.Vector2;
 
+import static gui.render.GridRenderer.GRID_SPACING;
+
 public class PlaceComponentTool extends Tool {
 
     private final ComponentFactory componentFactory;
@@ -32,7 +34,7 @@ public class PlaceComponentTool extends Tool {
                 );
 
         Component component =
-                componentFactory.create(worldPosition);
+                componentFactory.create(Vector2.snap(worldPosition,GRID_SPACING));
 
         canvas.getCommandManager()
                 .execute(

@@ -1,5 +1,6 @@
 package gui.render;
 
+import circuit.Net;
 import components.Component;
 import components.GroundNode;
 import components.InputNode;
@@ -9,6 +10,7 @@ import components.PowerNode;
 import gui.camera.Camera;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import simulation.Voltage;
 import util.Vector2;
 import components.OutputNode;
 import circuit.Circuit;
@@ -129,5 +131,22 @@ public class ComponentRenderer {
 
         gc.strokeOval(-8, -8, 16, 16);
         gc.strokeText("OUT", -12, -12);
+
+        Voltage voltage = Voltage.FLOATING;
+
+        Net net = circuit.getNet(outputNode.getInput());
+
+        if(net != null){
+            voltage = net.getVoltage();
+        }
+
+        switch(voltage){
+            case HIGH -> gc.setFill(Color.RED);
+            case LOW -> gc.setFill(Color.BLUE);
+            case CONFLICT -> gc.setFill(Color.PURPLE);
+            case FLOATING -> gc.setFill(Color.YELLOW);
+        }
+
+        gc.fillOval(-5, -5, 10, 10);
     }
 }

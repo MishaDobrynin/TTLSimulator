@@ -7,7 +7,7 @@ import util.Vector2;
 
 public class GridRenderer {
     private final Camera camera; //shared
-    private static final double GRID_SPACING = 20;
+    public static final double GRID_SPACING = 20;
     private static final double DOT_RADIUS = 2;
     private boolean enabled; //enabled /disabled grid dots
 
@@ -21,7 +21,7 @@ public class GridRenderer {
             return;
         }
         
-        gc.setFill(Color.LIGHTGRAY);
+        gc.setFill(Color.BLACK);
         Vector2 worldTopLeft = camera.screenToWorld(
                 new Vector2(0, 0), //pixels 0 0
                 width,
