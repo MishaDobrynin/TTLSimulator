@@ -13,14 +13,14 @@ public class GridRenderer {
 
     public GridRenderer(Camera camera){
         this.camera = camera;
-        this.enabled = true;
+        this.enabled = false; //no grid dots
     }
 
     public void render(GraphicsContext gc, double width, double height){
         if(!enabled){
             return;
         }
-        
+
         gc.setFill(Color.BLACK);
         Vector2 worldTopLeft = camera.screenToWorld(
                 new Vector2(0, 0), //pixels 0 0

@@ -40,8 +40,8 @@ public class ComponentRenderer {
         else if(component instanceof PMOS){
             drawPMOS(gc);
         }
-        else if(component instanceof InputNode){
-            drawInput(gc);
+        else if(component instanceof InputNode inputNode){
+            drawInput(gc, circuit, inputNode);
         }
         else if(component instanceof PowerNode){
             drawPower(gc);
@@ -76,11 +76,22 @@ public class ComponentRenderer {
         drawTransistor(gc, "P");
     }
 
-    private void drawInput(GraphicsContext gc){
+    private void drawInput(GraphicsContext gc, Circuit circuit, InputNode inputNode){
         gc.setStroke(Color.BLACK);
 
         gc.strokeOval(-8, -8, 16, 16);
         gc.strokeText("IN", -8, -12);
+
+        Voltage voltage = Voltage.FLOATING;
+
+        Net net = circuit.getNet(inputNode.getOutput());
+
+        if(net != null){
+            voltage = net.getVoltage();
+        }
+
+        drawVoltageDot(gc, voltage);
+        drawVoltageText(gc, voltage);
     }
 
     private void drawPower(GraphicsContext gc){
@@ -140,13 +151,35 @@ public class ComponentRenderer {
             voltage = net.getVoltage();
         }
 
+        drawVoltageDot(gc, voltage);
+        drawVoltageText(gc, voltage);
+    }
+
+    private void drawVoltageDot(GraphicsContext gc, Voltage voltage){
         switch(voltage){
             case HIGH -> gc.setFill(Color.RED);
             case LOW -> gc.setFill(Color.BLUE);
             case CONFLICT -> gc.setFill(Color.PURPLE);
             case FLOATING -> gc.setFill(Color.YELLOW);
+            default -> gc.setFill(Color.GRAY);
         }
 
         gc.fillOval(-5, -5, 10, 10);
+    }
+
+    private void drawVoltageText(GraphicsContext gc, Voltage voltage){
+        gc.setFill(Color.BLACK);
+
+        String text;
+
+        switch(voltage){
+            case HIGH -> text = "HIGH";
+            case LOW -> text = "LOW";
+            case CONFLICT -> text = "CONFLICT";
+            case FLOATING -> text = "FLOATING";
+            default -> text = "UNKNOWN";
+        }
+
+        gc.fillText(text, -20, 25);
     }
 }

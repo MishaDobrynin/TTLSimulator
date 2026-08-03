@@ -233,7 +233,7 @@ public class CircuitCanvas extends Pane {
         double width = backgroundCanvas.getWidth();
         double height = backgroundCanvas.getHeight();
 
-        gc.setFill(Color.GRAY);
+        gc.setFill(Color.LIGHTGRAY);
         gc.fillRect(0, 0, width, height);
 
         gridRenderer.render(gc, width, height);
