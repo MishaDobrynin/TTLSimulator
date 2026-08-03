@@ -7,7 +7,7 @@ import java.util.List;
 public abstract class Component {
     private Vector2 position;
     private double rotation;
-    private final List<Pin> pins;
+    protected final List<Pin> pins;
 
     protected Component(Vector2 position){
         this.rotation = 0;
