@@ -13,15 +13,13 @@ public class ToolPalette {
     private final Canvas canvas;
     private final CircuitCanvas circuitCanvas;
 
-
     private double centerX;
     private double centerY;
 
     public ToolPalette(CircuitCanvas circuitCanvas){
         this.circuitCanvas = circuitCanvas;
-
+        
         canvas = new Canvas(150, 150);
-
         canvas.setOnMousePressed(this::handleClick);
         canvas.setVisible(false);
 
@@ -35,12 +33,9 @@ public class ToolPalette {
     public void open(double x, double y){
         centerX = x;
         centerY = y;
-
         canvas.setLayoutX(centerX - 75);
         canvas.setLayoutY(centerY - 75);
-
         canvas.setVisible(true);
-
         draw();
     }
 
@@ -51,16 +46,11 @@ public class ToolPalette {
     private void handleClick(MouseEvent event){
         int column = (int)(event.getX() / SIZE);
         int row = (int)(event.getY() / SIZE);
-
         int index = getToolIndex(row, column);
 
         if(index != -1){
-            circuitCanvas.getToolManager().setCurrentTool(
-                    ToolFactory.getTool(index),
-                    circuitCanvas
-            );
+            circuitCanvas.getToolManager().setCurrentTool(ToolFactory.getTool(index),circuitCanvas);
         }
-
         close();
 
         event.consume();
@@ -86,9 +76,7 @@ public class ToolPalette {
 
     private void draw(){
         GraphicsContext gc = canvas.getGraphicsContext2D();
-
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
         gc.setStroke(Color.BLACK);
 
         for(int i = 0; i <= 3; i++){
@@ -96,16 +84,16 @@ public class ToolPalette {
             gc.strokeLine(0, i * SIZE, 150, i * SIZE);
         }
 
-        gc.strokeText("SEL", 10, 30);
-        gc.strokeText("NMOS", 55, 30);
-        gc.strokeText("PMOS", 105, 30);
+        gc.strokeText("SEL", 10, 30); //select tool
+        gc.strokeText("NMOS", 55, 30); //n type metal-oxide semiconductor
+        gc.strokeText("PMOS", 105, 30); //p type metal-oxide semiconductor
 
-        gc.strokeText("IN", 15, 80);
-        gc.strokeText("OUT", 105, 80);
+        gc.strokeText("IN", 15, 80); //input pins, controllable
+        gc.strokeText("OUT", 105, 80); //the pins to be read
 
-        gc.strokeText("PWR", 10, 130);
-        gc.strokeText("WIRE", 55, 130);
-        gc.strokeText("GND", 105, 130);
+        gc.strokeText("PWR", 10, 130); //power (vdd)
+        gc.strokeText("WIRE", 55, 130); //a wire
+        gc.strokeText("GND", 105, 130); //gnd
 
         gc.strokeText("+", 72, 80);
     }
