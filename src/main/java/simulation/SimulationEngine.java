@@ -11,11 +11,29 @@ import components.PMOS;
 import components.PowerNode;
 
 public class SimulationEngine {
-
     private static final int MAX_ITERATIONS = 100;
 
-    public void simulate(Circuit circuit){
+    private long currentTime;
 
+
+    public SimulationEngine(){
+        currentTime = 0;
+    }
+
+
+    public long getCurrentTime(){
+        return currentTime;
+    }
+
+
+    public void step(long timeStep, Circuit circuit){
+        currentTime += timeStep;
+
+        simulate(circuit);
+    }
+
+
+    public void simulate(Circuit circuit){
         resetVoltages(circuit);
 
         boolean changed;
@@ -35,7 +53,6 @@ public class SimulationEngine {
 
 
     private void resetVoltages(Circuit circuit){
-
         for(Net net : circuit.getNets()){
             net.setVoltage(Voltage.FLOATING);
         }
@@ -43,34 +60,18 @@ public class SimulationEngine {
 
 
     private boolean driveSources(Circuit circuit){
-
         boolean changed = false;
 
         for(Component component : circuit.getComponents()){
 
             if(component instanceof PowerNode){
-
-                changed |= drivePin(
-                        circuit,
-                        component.getPins().getFirst(),
-                        Voltage.HIGH
-                );
+                changed |= drivePin(circuit, component.getPins().getFirst(), Voltage.HIGH);
             }
             else if(component instanceof GroundNode){
-
-                changed |= drivePin(
-                        circuit,
-                        component.getPins().getFirst(),
-                        Voltage.LOW
-                );
+                changed |= drivePin(circuit, component.getPins().getFirst(), Voltage.LOW);
             }
             else if(component instanceof InputNode inputNode){
-
-                changed |= drivePin(
-                        circuit,
-                        inputNode.getPins().getFirst(),
-                        inputNode.getVoltage()
-                );
+                changed |= drivePin(circuit, inputNode.getPins().getFirst(), inputNode.getVoltage());
             }
         }
 
@@ -79,28 +80,21 @@ public class SimulationEngine {
 
 
     private boolean propagateNMOS(Circuit circuit){
-
         boolean changed = false;
 
         for(Component component : circuit.getComponents()){
 
             if(component instanceof NMOS nmos){
 
-                Net gate =
-                        circuit.getNet(nmos.getGate());
-
-                Net source =
-                        circuit.getNet(nmos.getSource());
-
-                Net drain =
-                        circuit.getNet(nmos.getDrain());
+                Net gate = circuit.getNet(nmos.getGate());
+                Net source = circuit.getNet(nmos.getSource());
+                Net drain = circuit.getNet(nmos.getDrain());
 
                 if(gate == null || source == null || drain == null){
                     continue;
                 }
 
                 if(gate.getVoltage() == Voltage.HIGH){
-
                     changed |= connect(source, drain);
                 }
             }
@@ -111,28 +105,21 @@ public class SimulationEngine {
 
 
     private boolean propagatePMOS(Circuit circuit){
-
         boolean changed = false;
 
         for(Component component : circuit.getComponents()){
 
             if(component instanceof PMOS pmos){
 
-                Net gate =
-                        circuit.getNet(pmos.getGate());
-
-                Net source =
-                        circuit.getNet(pmos.getSource());
-
-                Net drain =
-                        circuit.getNet(pmos.getDrain());
+                Net gate = circuit.getNet(pmos.getGate());
+                Net source = circuit.getNet(pmos.getSource());
+                Net drain = circuit.getNet(pmos.getDrain());
 
                 if(gate == null || source == null || drain == null){
                     continue;
                 }
 
                 if(gate.getVoltage() == Voltage.LOW){
-
                     changed |= connect(source, drain);
                 }
             }
@@ -142,11 +129,7 @@ public class SimulationEngine {
     }
 
 
-    private boolean drivePin(
-            Circuit circuit,
-            Pin pin,
-            Voltage voltage){
-
+    private boolean drivePin(Circuit circuit, Pin pin, Voltage voltage){
         Net net = circuit.getNet(pin);
 
         if(net == null){
@@ -156,13 +139,11 @@ public class SimulationEngine {
         Voltage current = net.getVoltage();
 
         if(current == Voltage.FLOATING){
-
             net.setVoltage(voltage);
             return true;
         }
 
         if(current != voltage){
-
             net.setVoltage(Voltage.CONFLICT);
             return true;
         }
@@ -172,7 +153,6 @@ public class SimulationEngine {
 
 
     private boolean connect(Net first, Net second){
-
         Voltage firstVoltage = first.getVoltage();
         Voltage secondVoltage = second.getVoltage();
 
@@ -194,13 +174,11 @@ public class SimulationEngine {
         }
 
         if(firstVoltage == Voltage.FLOATING){
-
             first.setVoltage(secondVoltage);
             return true;
         }
 
         if(secondVoltage == Voltage.FLOATING){
-
             second.setVoltage(firstVoltage);
             return true;
         }
