@@ -4,11 +4,11 @@ import gui.CircuitCanvas;
 import gui.tools.PartFactory;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.input.MouseEvent;
 
 public class PartPalette {
-    private static final double SIZE = 50;
+private static final double SIZE = 50;
 
     private final Canvas canvas;
     private final CircuitCanvas circuitCanvas;
@@ -20,7 +20,6 @@ public class PartPalette {
         this.circuitCanvas = circuitCanvas;
 
         canvas = new Canvas(150, 150);
-
         canvas.setOnMousePressed(this::handleClick);
         canvas.setVisible(false);
 
