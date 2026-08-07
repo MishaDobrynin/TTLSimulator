@@ -4,6 +4,7 @@ import gui.CircuitCanvas;
 import gui.tools.PartFactory;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class PartPalette {
@@ -20,12 +21,8 @@ public class PartPalette {
 
         canvas = new Canvas(150, 150);
 
+        canvas.setOnMousePressed(this::handleClick);
         canvas.setVisible(false);
-
-        canvas.setOnMouseClicked(event -> {
-            handleClick(event.getX(), event.getY());
-            event.consume();
-        });
 
         draw();
     }
@@ -50,9 +47,9 @@ public class PartPalette {
         canvas.setVisible(false);
     }
 
-    private void handleClick(double x, double y){
-        int column = (int)(x / SIZE);
-        int row = (int)(y / SIZE);
+    private void handleClick(MouseEvent event){
+        int column = (int)(event.getX() / SIZE);
+        int row = (int)(event.getY() / SIZE);
 
         int index = getPartIndex(row, column);
 
@@ -64,13 +61,18 @@ public class PartPalette {
         }
 
         close();
+
+        event.consume();
     }
 
     private int getPartIndex(int row, int column){
+        if(row == 1 && column == 1){
+            return -1;
+        }
+
         return switch(row * 3 + column){
             case 0 -> 1; // NAND
             case 1 -> 2; // NOT
-
             default -> -1;
         };
     }
@@ -87,7 +89,7 @@ public class PartPalette {
             gc.strokeLine(0, i * SIZE, 150, i * SIZE);
         }
 
-        gc.strokeText("NAND", 6, 30);
+        gc.strokeText("NAND", 5, 30);
         gc.strokeText("NOT", 60, 30);
 
         gc.strokeText("+", 72, 80);
