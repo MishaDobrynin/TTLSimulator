@@ -34,4 +34,4 @@ public class SimulationEvent implements Comparable<SimulationEvent> {
     public int compareTo(SimulationEvent other){
         return Long.compare(executionTime, other.executionTime);
     }
-}1
+}
