@@ -21,7 +21,6 @@ import gui.render.GridRenderer;
 import gui.render.VoltageRenderer;
 import gui.render.WireRenderer;
 import gui.selection.SelectionManager;
-import gui.tools.PlaceComponentTool;
 import gui.tools.SelectTool;
 import gui.tools.ToolManager;
 import javafx.beans.value.ChangeListener;
@@ -254,6 +253,21 @@ public class CircuitCanvas extends Pane {
 
     public void simulate(){
         simulationEngine.simulate(circuit);
+    }
+
+    public SimulationEngine getSimulationEngine(){
+        return simulationEngine;
+    }
+
+    public void stepSimulation(long timeStep){
+        simulationEngine.step(timeStep, circuit);
+        redraw();
+    }
+
+    public void resetSimulation(){
+        simulationEngine.reset();
+        simulate();
+        redraw();
     }
 
     public Camera getCamera(){
