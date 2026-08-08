@@ -1,14 +1,15 @@
 package gui.palette;
 
 import gui.CircuitCanvas;
-import gui.tools.PartFactory;
+import gui.tools.GateFactory;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.input.MouseEvent;
 
 public class PartPalette {
-private static final double SIZE = 50;
+
+    private static final double SIZE = 50;
 
     private final Canvas canvas;
     private final CircuitCanvas circuitCanvas;
@@ -54,7 +55,7 @@ private static final double SIZE = 50;
 
         if(index != -1){
             circuitCanvas.getToolManager().setCurrentTool(
-                    PartFactory.getPart(index),
+                    GateFactory.getGate(index),
                     circuitCanvas
             );
         }
@@ -79,7 +80,12 @@ private static final double SIZE = 50;
     private void draw(){
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        gc.clearRect(
+                0,
+                0,
+                canvas.getWidth(),
+                canvas.getHeight()
+        );
 
         gc.setStroke(Color.BLACK);
 
