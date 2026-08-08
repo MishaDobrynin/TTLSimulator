@@ -16,6 +16,7 @@ import gui.command.DeleteComponentCommand;
 import gui.command.DeleteWireCommand;
 import gui.command.RotateComponentCommand;
 import gui.palette.ToolPalette;
+import gui.palette.PartPalette;
 import gui.render.ComponentRenderer;
 import gui.render.GridRenderer;
 import gui.render.VoltageRenderer;
@@ -51,6 +52,7 @@ public class CircuitCanvas extends Pane {
     private final SimulationEngine simulationEngine;
 
     private final ToolPalette toolPalette;
+    private final PartPalette partPalette;
 
     private double mouseX;
     private double mouseY;
@@ -65,6 +67,7 @@ public class CircuitCanvas extends Pane {
         voltageRenderer = new VoltageRenderer(camera);
 
         toolPalette = new ToolPalette(this);
+        partPalette = new PartPalette(this);
 
         simulationEngine = new SimulationEngine();
 
@@ -83,6 +86,7 @@ public class CircuitCanvas extends Pane {
 
         getChildren().add(backgroundCanvas);
         getChildren().add(toolPalette.getCanvas());
+        getChildren().add(partPallete.getCanvas());
 
         setFocusTraversable(true);
 
@@ -224,6 +228,11 @@ public class CircuitCanvas extends Pane {
 
             if(event.getCode() == KeyCode.C){
                 toolPalette.open(mouseX, mouseY);
+                return;
+            }
+
+            if(event.getCode() == KeyCode.P){
+                partPalette.open(mouseX, mouseY);
                 return;
             }
 
