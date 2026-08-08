@@ -78,17 +78,17 @@ public class SimulationEngine {
     }
 
     public void step(long timeStep, Circuit circuit){
-
         if(timeStep < 0){
             throw new IllegalArgumentException(
                     "Time step cannot be negative."
             );
         }
-
+    
         currentTime += timeStep;
-
+    
         processEvents();
-
+    
+        // Re-run the circuit using the state produced by scheduled events.
         simulate(circuit);
     }
 
