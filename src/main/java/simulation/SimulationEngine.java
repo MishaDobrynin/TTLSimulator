@@ -116,12 +116,11 @@ public class SimulationEngine {
     }
 
     private void processEvents(){
-
         while(!eventQueue.isEmpty()
                 && eventQueue.peek().getExecutionTime() <= currentTime){
-
+    
             SimulationEvent event = eventQueue.poll();
-
+    
             event.apply();
         }
     }
