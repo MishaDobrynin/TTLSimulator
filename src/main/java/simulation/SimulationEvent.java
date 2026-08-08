@@ -8,7 +8,29 @@ public class SimulationEvent implements Comparable<SimulationEvent> {
     private final Net net;
     private final Voltage voltage;
 
-    public SimulationEvent(long executionTime, Net net, Voltage voltage){
+    public SimulationEvent(
+            long executionTime,
+            Net net,
+            Voltage voltage){
+
+        if(executionTime < 0){
+            throw new IllegalArgumentException(
+                    "Execution time cannot be negative."
+            );
+        }
+
+        if(net == null){
+            throw new IllegalArgumentException(
+                    "Event net cannot be null."
+            );
+        }
+
+        if(voltage == null){
+            throw new IllegalArgumentException(
+                    "Event voltage cannot be null."
+            );
+        }
+
         this.executionTime = executionTime;
         this.net = net;
         this.voltage = voltage;
@@ -32,6 +54,16 @@ public class SimulationEvent implements Comparable<SimulationEvent> {
 
     @Override
     public int compareTo(SimulationEvent other){
-        return Long.compare(executionTime, other.executionTime);
+
+        if(other == null){
+            throw new NullPointerException(
+                    "Cannot compare a simulation event to null."
+            );
+        }
+
+        return Long.compare(
+                executionTime,
+                other.executionTime
+        );
     }
 }
