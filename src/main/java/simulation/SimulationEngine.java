@@ -93,8 +93,6 @@ public class SimulationEngine {
     }
 
     public void simulate(Circuit circuit){
-        resetVoltages(circuit);
-
         boolean changed;
         int iterations = 0;
 
