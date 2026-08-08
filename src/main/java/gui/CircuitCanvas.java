@@ -31,6 +31,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import simulation.SimulationEngine;
+import util.Vector2;
 
 public class CircuitCanvas extends Pane {
 
@@ -92,13 +93,19 @@ public class CircuitCanvas extends Pane {
             }
         });
 
-        ChangeListener<Number> resizeListener = (obs, oldVal, newVal) -> redraw();
+        ChangeListener<Number> resizeListener =
+                (obs, oldVal, newVal) -> redraw();
 
         widthProperty().addListener(resizeListener);
         heightProperty().addListener(resizeListener);
 
-        setOnMousePressed(event -> toolManager.mousePressed(event, this));
-        setOnMouseReleased(event -> toolManager.mouseReleased(event, this));
+        setOnMousePressed(event ->
+                toolManager.mousePressed(event, this)
+        );
+
+        setOnMouseReleased(event ->
+                toolManager.mouseReleased(event, this)
+        );
 
         setOnMouseDragged(event -> {
             mouseX = event.getX();
@@ -114,6 +121,35 @@ public class CircuitCanvas extends Pane {
             toolManager.mouseMoved(event, this);
         });
 
+        setOnScroll(event -> {
+            mouseX = event.getX();
+            mouseY = event.getY();
+
+            if(event.getDeltaY() == 0){
+                return;
+            }
+
+            double zoomFactor;
+
+            if(event.getDeltaY() > 0){
+                zoomFactor = 1.1;
+            }
+            else{
+                zoomFactor = 1.0 / 1.1;
+            }
+
+            camera.zoomAt(
+                    zoomFactor,
+                    new Vector2(event.getX(), event.getY()),
+                    getWidth(),
+                    getHeight()
+            );
+
+            redraw();
+
+            event.consume();
+        });
+
         simulate();
         redraw();
     }
@@ -121,7 +157,9 @@ public class CircuitCanvas extends Pane {
     private void setupKeyboardControls(){
         setOnKeyPressed(event -> {
 
-            if((event.isControlDown() || event.isMetaDown()) && event.getCode() == KeyCode.Z){
+            if((event.isControlDown() || event.isMetaDown())
+                    && event.getCode() == KeyCode.Z){
+
                 commandManager.undo();
 
                 simulate();
@@ -130,7 +168,9 @@ public class CircuitCanvas extends Pane {
                 return;
             }
 
-            if((event.isControlDown() || event.isMetaDown()) && event.getCode() == KeyCode.Y){
+            if((event.isControlDown() || event.isMetaDown())
+                    && event.getCode() == KeyCode.Y){
+
                 commandManager.redo();
 
                 simulate();
@@ -139,16 +179,20 @@ public class CircuitCanvas extends Pane {
                 return;
             }
 
-            if(event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE){
+            if(event.getCode() == KeyCode.DELETE
+                    || event.getCode() == KeyCode.BACK_SPACE){
 
-                Component selectedComponent = selectionManager.getSelectedComponent();
+                Component selectedComponent =
+                        selectionManager.getSelectedComponent();
 
                 if(selectedComponent != null){
 
-                    commandManager.execute(new DeleteComponentCommand(
-                            circuit,
-                            selectedComponent
-                    ));
+                    commandManager.execute(
+                            new DeleteComponentCommand(
+                                    circuit,
+                                    selectedComponent
+                            )
+                    );
 
                     selectionManager.clearSelection();
 
@@ -158,14 +202,17 @@ public class CircuitCanvas extends Pane {
                     return;
                 }
 
-                Wire selectedWire = selectionManager.getSelectedWire();
+                Wire selectedWire =
+                        selectionManager.getSelectedWire();
 
                 if(selectedWire != null){
 
-                    commandManager.execute(new DeleteWireCommand(
-                            circuit,
-                            selectedWire
-                    ));
+                    commandManager.execute(
+                            new DeleteWireCommand(
+                                    circuit,
+                                    selectedWire
+                            )
+                    );
 
                     selectionManager.clearSelection();
 
@@ -183,15 +230,18 @@ public class CircuitCanvas extends Pane {
 
             if(event.getCode() == KeyCode.R){
 
-                Component selected = selectionManager.getSelectedComponent();
+                Component selected =
+                        selectionManager.getSelectedComponent();
 
                 if(selected != null){
 
-                    commandManager.execute(new RotateComponentCommand(
-                            selected,
-                            selected.getRotation(),
-                            selected.getRotation() + 90
-                    ));
+                    commandManager.execute(
+                            new RotateComponentCommand(
+                                    selected,
+                                    selected.getRotation(),
+                                    selected.getRotation() + 90
+                            )
+                    );
 
                     simulate();
                     redraw();
@@ -228,7 +278,8 @@ public class CircuitCanvas extends Pane {
 
     public void redraw(){
 
-        GraphicsContext gc = backgroundCanvas.getGraphicsContext2D();
+        GraphicsContext gc =
+                backgroundCanvas.getGraphicsContext2D();
 
         double width = backgroundCanvas.getWidth();
         double height = backgroundCanvas.getHeight();
@@ -248,9 +299,11 @@ public class CircuitCanvas extends Pane {
                     height
             );
 
-            Net net = circuit.getNet(wire.getStart());
+            Net net =
+                    circuit.getNet(wire.getStart());
 
             if(net != null){
+
                 voltageRenderer.drawVoltage(
                         gc,
                         wire.getStartPosition(),
@@ -262,16 +315,35 @@ public class CircuitCanvas extends Pane {
             }
 
             if(selectionManager.isSelected(wire)){
-                wireRenderer.drawSelection(gc, wire.getStartPosition(), wire.getEndPosition(), width, height);
+
+                wireRenderer.drawSelection(
+                        gc,
+                        wire.getStartPosition(),
+                        wire.getEndPosition(),
+                        width,
+                        height
+                );
             }
         }
 
         for(Component component : circuit.getComponents()){
 
-            componentRenderer.drawComponent(gc, component, circuit, width, height);
+            componentRenderer.drawComponent(
+                    gc,
+                    component,
+                    circuit,
+                    width,
+                    height
+            );
 
             if(selectionManager.isSelected(component)){
-                componentRenderer.drawSelection(gc, component, width, height);
+
+                componentRenderer.drawSelection(
+                        gc,
+                        component,
+                        width,
+                        height
+                );
             }
         }
     }
